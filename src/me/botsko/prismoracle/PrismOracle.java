@@ -2,7 +2,9 @@ package me.botsko.prismoracle;
 
 import me.botsko.prism.Prism;
 import me.botsko.prismoracle.listeners.PrismOraclePlayerListener;
+import me.botsko.prismoracle.utils.JoinUtil;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,6 +51,10 @@ public class PrismOracle extends JavaPlugin {
 			// Register listeners
 			getServer().getPluginManager().registerEvents(new PrismOraclePlayerListener(this), this);
 			
+			
+			// Register tasks
+			catchUncaughtDisconnects();
+			
 		}
 	}
 	
@@ -91,6 +97,26 @@ public class PrismOracle extends JavaPlugin {
 			prism.log("Prism Core (anti-grief) not found. Plugin add-on may not run.");
 			this.disablePlugin();
 		}
+	}
+	
+	
+	/**
+	 * If a user disconnects in an unknown way that is never caught by onPlayerQuit,
+	 * this will force close all records except for players currently online.
+	 */
+	public void catchUncaughtDisconnects(){
+		getServer().getScheduler().runTaskTimerAsynchronously(this, new Runnable(){
+		    public void run(){
+		    	String on_users = "";
+				for(Player pl: getServer().getOnlinePlayers()) {
+					on_users += "'"+pl.getName()+"',";
+				}
+				if(!on_users.isEmpty()){
+					on_users = on_users.substring(0, on_users.length()-1);
+				}
+				JoinUtil.forceDateForOfflinePlayers( prism, on_users );
+		    }
+		}, 1200L, 1200L);
 	}
 	
 	
