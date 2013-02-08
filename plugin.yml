@@ -1,0 +1,6 @@
+name: PrismOracle
+main: me.botsko.prismoracle.PrismOracle
+version: nightly
+softdepend: [Prism]
+default: op
+commands:
