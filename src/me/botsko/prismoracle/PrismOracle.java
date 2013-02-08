@@ -46,7 +46,6 @@ public class PrismOracle extends JavaPlugin {
 //			    log("MCStats submission failed.");
 //			}
 			
-			
 			// Register listeners
 			getServer().getPluginManager().registerEvents(new PrismOraclePlayerListener(this), this);
 			
@@ -63,17 +62,18 @@ public class PrismOracle extends JavaPlugin {
 	}
 	
 	
-//	CREATE TABLE IF NOT EXISTS `prism_oracle_joins` (
-//			  `id` int(11) unsigned NOT NULL auto_increment,
-//			  `player_count` int(4) NOT NULL,
-//			  `username` varchar(16) NOT NULL,
-//			  `player_join` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-//			  `player_quit` timestamp NULL default NULL,
-//			  `playtime` int(45) default NULL,
-//			  `ip` varchar(16) NOT NULL,
-//			  PRIMARY KEY  (`id`),
-//			  KEY `username` (`username`)
-//			) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+//CREATE TABLE IF NOT EXISTS `prism_oracle_joins` (
+//  `id` int(11) unsigned NOT NULL auto_increment,
+//  `player_count` int(4) NOT NULL,
+//  `player` varchar(16) NOT NULL,
+//  `player_join` timestamp NULL default NULL,
+//  `player_quit` timestamp NULL default NULL,
+//  `playtime` int(7) default NULL,
+//  `ip` varchar(16) NOT NULL,
+//  PRIMARY KEY  (`id`),
+//  KEY `username` (`player`)
+//) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
 	
 	
 	/**
