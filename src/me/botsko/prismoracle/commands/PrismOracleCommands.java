@@ -1,9 +1,9 @@
 package me.botsko.prismoracle.commands;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
-import me.botsko.prism.commandlibs.Executor;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prismoracle.PrismOracle;
+import me.botsko.prismoracle.commandlibs.Executor;
 
 public class PrismOracleCommands extends Executor {
 
@@ -12,7 +12,7 @@ public class PrismOracleCommands extends Executor {
 	 * 
 	 * @param prism
 	 */
-	public PrismOracleCommands(Prism prism) {
+	public PrismOracleCommands(PrismOracle prism) {
 		super(prism);
 		setupCommands();
 	}
@@ -25,18 +25,16 @@ public class PrismOracleCommands extends Executor {
 		
 
 		/**
-		 * /prism lookup 
+		 * /seen
 		 */
-		addSub("lookup", "prism.lookup")
-		.setMinArgs(1)
-		.setUsage("(params)")
-		.setDescription("Search for actions.")
-		.addAlias("l")
+		addSub("seen", "prismoracle.seen")
+		.setUsage("(username)")
+		.setDescription("View join and last seen dates for players")
 		.setHandler(new SeenCommand(plugin));
 		
 		
 		/**
-		 * /prism reload
+		 * /oracle reload
 		 */
 		addSub("reload", "prismoracle.reload")
 		.allowConsole()
@@ -45,7 +43,7 @@ public class PrismOracleCommands extends Executor {
             public void handle(CallInfo call) {
             	plugin.reloadConfig();
 				plugin.config = plugin.getConfig();
-				call.getSender().sendMessage( plugin.playerMsg("Configuration reloaded successfully.") );
+				call.getSender().sendMessage( plugin.messenger.playerMsg("Configuration reloaded successfully.") );
             }
 		});
 	}

@@ -1,10 +1,13 @@
 package me.botsko.prismoracle;
 
 import me.botsko.prism.Language;
+import me.botsko.prism.Messenger;
 import me.botsko.prism.Prism;
+import me.botsko.prismoracle.commands.PrismOracleCommands;
 import me.botsko.prismoracle.listeners.PrismOraclePlayerListener;
 import me.botsko.prismoracle.utils.JoinUtil;
 
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -24,6 +27,7 @@ public class PrismOracle extends JavaPlugin {
 	 */
 	public Language lang;
 	public FileConfiguration config;
+	public Messenger messenger;
 
 	
     /**
@@ -59,9 +63,14 @@ public class PrismOracle extends JavaPlugin {
 //			    log("MCStats submission failed.");
 //			}
 			
+			// Load re-usable libraries
+			messenger = new Messenger( plugin_name );
+			
+			// Add commands
+			getCommand("seen").setExecutor( (CommandExecutor) new PrismOracleCommands(this) );
+			
 			// Register listeners
 			getServer().getPluginManager().registerEvents(new PrismOraclePlayerListener(this), this);
-			
 			
 			// Register tasks
 			catchUncaughtDisconnects();
@@ -128,13 +137,36 @@ public class PrismOracle extends JavaPlugin {
 	}
 	
 	
-//	/**
-//	 * 
-//	 * @return
-//	 */
-//	public String getPrismVersion(){
-//		return this.plugin_version;
-//	}
+	/**
+     * Partial username matching
+     * @param Name
+     * @return
+     */
+    public String expandName(String Name) {
+        int m = 0;
+        String Result = "";
+        for (int n = 0; n < getServer().getOnlinePlayers().length; n++) {
+            String str = getServer().getOnlinePlayers()[n].getName();
+            if (str.matches("(?i).*" + Name + ".*")) {
+                m++;
+                Result = str;
+                if(m==2) {
+                    return null;
+                }
+            }
+            if (str.equalsIgnoreCase(Name))
+                return str;
+        }
+        if (m == 1)
+            return Result;
+        if (m > 1) {
+            return Name;
+        }
+        if (m < 1) {
+            return Name;
+        }
+        return Name;
+    }
 	
 	
 	/**

@@ -1,0 +1,6 @@
+commands:
+  invalid: "Invalid command."
+  no-permission: "You do not have permission to use this command."
+  invalid-arguments: "You're missing arguments for this command."
+  no-console: "You must be in-game to use this command."
+  

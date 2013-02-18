@@ -15,12 +15,12 @@ public class JoinUtil {
 	 * @param person
 	 * @param account_name
 	 */
-	public static void registerPlayerJoin( String username, String ip, int online_count ){
+	public static void registerPlayerJoin( String player, String ip, int online_count ){
 		try {
 			Connection conn = Prism.dbc();
 	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_oracle_joins (player_count,player,player_join,ip) VALUES (?,?,now(),?)");
 	        s.setInt(1, online_count);
-	        s.setString(2, username);
+	        s.setString(2, player);
 	        s.setString(3, ip);
 	        s.executeUpdate();
     		s.close();
@@ -36,19 +36,19 @@ public class JoinUtil {
 	 * @param person
 	 * @param account_name
 	 */
-	public static void registerPlayerQuit( String username ){
+	public static void registerPlayerQuit( String player ){
 		try {
 			
 			Connection conn = Prism.dbc();
 			
 			// Set the quit date for the players join session
 			PreparedStatement pstmt = conn.prepareStatement("UPDATE prism_oracle_joins SET player_quit = now() WHERE player_quit IS NULL AND player = ?");
-			pstmt.setString(1, username);
+			pstmt.setString(1, player);
 			pstmt.executeUpdate();
   
 			// Find all join sessions we must calc playtime for
 			pstmt = conn.prepareStatement ("SELECT id, TIME_TO_SEC(TIMEDIFF(player_quit,player_join)) FROM prism_oracle_joins WHERE player = ? AND playtime IS NULL");
-			pstmt.setString(1, username);
+			pstmt.setString(1, player);
 			pstmt.executeQuery();
 			ResultSet trs = pstmt.getResultSet();
  				
@@ -81,7 +81,7 @@ public class JoinUtil {
 			
 			// Ensure we ignore online players
 			if(!users.isEmpty()){
-				users = " AND username NOT IN ("+users+")";
+				users = " AND player NOT IN ("+users+")";
 			}
            
 			// Log as having quit

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubCommand;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -29,7 +28,7 @@ public class Executor implements CommandExecutor {
 	 * watch for commands that are secondary
 	 * to the primary command it's assigned to.
 	 */
-	public final String mode = "command";
+	public String mode = "command";
 	
 	/**
 	 * 
@@ -50,28 +49,31 @@ public class Executor implements CommandExecutor {
 	 * 
 	 */
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		
-//		plugin.eventTimer.resetEventList();
-//		plugin.eventTimer.recordTimedEvent("command entered");
-		
+
+		// Set player
 		Player player = null;
 		if (sender instanceof Player) {
 			player = (Player) sender;
 		}
-		
-//		// If no subcommand given
-//		if (args.length == 0) {
-//			args = new String[1];
-//			args[0] = "about";
-//		}
-		
+
+
 		// Find command
 		String subcommandName = "about";
 		if(mode.equals("subcommand")){
 			subcommandName = args[0].toLowerCase();
+			// Standardize the args
+			String[] new_args = new String[ (args.length - 1) ];
+			for(int i = 1; i < args.length; i++){
+				new_args[ (i - 1) ] = args[i];
+			}
+			args = new_args;
 		} else {
 			subcommandName = cmd.getName();
 		}
+		
+		
+		
+		System.out.print("ARGS: " + args.length);
 			
 		SubCommand sub = subcommands.get(subcommandName);
 		if (sub == null) {
@@ -84,14 +86,14 @@ public class Executor implements CommandExecutor {
 			return true;
 		}
 		// Ensure min number of arguments
-		else if ((args.length - 1 ) < sub.getMinArgs()) {
+		else if ( (mode.equals("subcommand") && (args.length - 1 ) < sub.getMinArgs()) || (mode.equals("command") && (args.length ) < sub.getMinArgs()) ) {
 			sender.sendMessage( plugin.lang.getString("commands.invalid-arguments") );
 			return true;
 		}
 		// Ensure command allows console
 		if(!(sender instanceof Player)){
 			if(!sub.isConsoleAllowed()){
-				sender.sendMessage( plugin.playerError( plugin.lang.getString("commands.no-console") ) );
+				sender.sendMessage( plugin.messenger.playerError( plugin.lang.getString("commands.no-console") ) );
 				return true;
 			}
 		}
