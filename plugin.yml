@@ -4,3 +4,6 @@ version: nightly
 softdepend: [Prism]
 default: op
 commands:
+   seen:
+      description: Display join and last seen dates for a player.
+      usage: /seen [player]

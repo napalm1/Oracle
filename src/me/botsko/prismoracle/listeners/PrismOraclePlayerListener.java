@@ -39,7 +39,7 @@ public class PrismOraclePlayerListener implements Listener {
         String ip = player.getAddress().getAddress().getHostAddress().toString();
 
         // Save join into table
-        JoinUtil.registerPlayerJoin( plugin.getPrism(), username, ip, plugin.getServer().getOnlinePlayers().length );
+        JoinUtil.registerPlayerJoin( username, ip, plugin.getServer().getOnlinePlayers().length );
         
     }
     
@@ -50,6 +50,6 @@ public class PrismOraclePlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(final PlayerQuitEvent event){
-        JoinUtil.registerPlayerQuit( plugin.getPrism(), event.getPlayer().getName() );
+        JoinUtil.registerPlayerQuit( event.getPlayer().getName() );
     }
 }
