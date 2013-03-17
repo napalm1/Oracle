@@ -25,11 +25,29 @@ public class OracleCommands extends Executor {
 		
 		final Oracle oracle = (Oracle) plugin;
 
+		
+		/**
+		 * /ban
+		 */
+		addSub("ban", "oracle.ban")
+		.allowConsole()
+		.setHandler(new BanCommand( oracle ));
+		
+		
 		/**
 		 * /seen
 		 */
 		addSub("seen", "oracle.seen")
+		.allowConsole()
 		.setHandler(new SeenCommand( oracle ));
+		
+		
+		/**
+		 * /unban
+		 */
+		addSub("unban", "oracle.unban")
+		.allowConsole()
+		.setHandler(new UnbanCommand( oracle ));
 		
 		
 		/**

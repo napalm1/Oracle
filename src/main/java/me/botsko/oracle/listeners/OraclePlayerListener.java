@@ -1,6 +1,7 @@
 package me.botsko.oracle.listeners;
 
 import me.botsko.oracle.Oracle;
+import me.botsko.oracle.utils.BanUtil;
 import me.botsko.oracle.utils.JoinUtil;
 
 import org.bukkit.entity.Player;
@@ -8,6 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class OraclePlayerListener implements Listener {
@@ -41,6 +44,25 @@ public class OraclePlayerListener implements Listener {
         // Save join into table
         JoinUtil.registerPlayerJoin( username, ip, plugin.getServer().getOnlinePlayers().length );
         
+    }
+    
+    
+    /**
+     * 
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerLogin(final PlayerLoginEvent event){
+    	
+    	Player player = event.getPlayer();
+    	
+    	try {
+			BanUtil.playerMayJoin( player.getName() );
+		} catch (Exception e){
+			event.setKickMessage( "Banned. " + e.getMessage() );
+			event.setResult( Result.KICK_OTHER );
+			plugin.log( "Rejecting player login due to ban. For: " + player.getName() );
+		}
     }
     
     

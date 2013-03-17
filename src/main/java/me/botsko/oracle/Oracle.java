@@ -87,7 +87,9 @@ public class Oracle extends JavaPlugin {
 			messenger = new Messenger( plugin_name );
 			
 			// Add commands
+			getCommand("ban").setExecutor( (CommandExecutor) new OracleCommands(this) );
 			getCommand("seen").setExecutor( (CommandExecutor) new OracleCommands(this) );
+			getCommand("unban").setExecutor( (CommandExecutor) new OracleCommands(this) );
 			
 			// Register listeners
 			getServer().getPluginManager().registerEvents(new OraclePlayerListener(this), this);

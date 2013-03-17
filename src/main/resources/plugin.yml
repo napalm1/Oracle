@@ -6,3 +6,9 @@ commands:
    seen:
       description: Display join and last seen dates for a player.
       usage: /seen [player]
+   ban:
+      description: Ban a player from the server.
+      usage: /ban [player]
+   unban:
+      description: Unban a player from the server.
+      usage: /unban [player]
