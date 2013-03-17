@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PrismOraclePlayerListener implements Listener {
+public class OraclePlayerListener implements Listener {
 	
 	/**
 	 * 
@@ -22,7 +22,7 @@ public class PrismOraclePlayerListener implements Listener {
 	 * 
 	 * @param plugin
 	 */
-	public PrismOraclePlayerListener( Oracle plugin ){
+	public OraclePlayerListener( Oracle plugin ){
 		this.plugin = plugin;
 	}
 	

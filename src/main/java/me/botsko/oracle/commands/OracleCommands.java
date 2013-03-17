@@ -5,14 +5,14 @@ import me.botsko.oracle.commandlibs.CallInfo;
 import me.botsko.oracle.commandlibs.Executor;
 import me.botsko.oracle.commandlibs.SubHandler;
 
-public class PrismOracleCommands extends Executor {
+public class OracleCommands extends Executor {
 
 	
 	/**
 	 * 
-	 * @param prism
+	 * @param oracle
 	 */
-	public PrismOracleCommands(Oracle oracle) {
+	public OracleCommands(Oracle oracle) {
 		super( oracle, "command", "oracle" );
 		setupCommands();
 	}
@@ -28,14 +28,14 @@ public class PrismOracleCommands extends Executor {
 		/**
 		 * /seen
 		 */
-		addSub("seen", "prismoracle.seen")
+		addSub("seen", "oracle.seen")
 		.setHandler(new SeenCommand( oracle ));
 		
 		
 		/**
 		 * /oracle reload
 		 */
-		addSub("reload", "prismoracle.reload")
+		addSub("reload", "oracle.reload")
 		.allowConsole()
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {

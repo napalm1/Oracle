@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import me.botsko.oracle.commands.PrismOracleCommands;
-import me.botsko.oracle.listeners.PrismOraclePlayerListener;
+import me.botsko.oracle.commands.OracleCommands;
+import me.botsko.oracle.listeners.OraclePlayerListener;
 import me.botsko.oracle.utils.JoinUtil;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -41,7 +41,6 @@ public class Oracle extends JavaPlugin {
 		plugin_name = this.getDescription().getName();
 		plugin_version = this.getDescription().getVersion();
 		
-		// Make sure Prism exists
 		checkPluginDependancies();
 		
 		log("Initializing Oracle " + plugin_version + ". By Viveleroi.");
@@ -49,7 +48,7 @@ public class Oracle extends JavaPlugin {
 		// Loaf config
 		loadConfig();
 		
-//		if(getConfig().getBoolean("prism.notify-newer-versions")){
+//		if(getConfig().getBoolean("oracle.notify-newer-versions")){
 //			String notice = UpdateNotification.checkForNewerBuild(plugin_version);
 //			if(notice != null){
 //				log(notice);
@@ -88,10 +87,10 @@ public class Oracle extends JavaPlugin {
 			messenger = new Messenger( plugin_name );
 			
 			// Add commands
-			getCommand("seen").setExecutor( (CommandExecutor) new PrismOracleCommands(this) );
+			getCommand("seen").setExecutor( (CommandExecutor) new OracleCommands(this) );
 			
 			// Register listeners
-			getServer().getPluginManager().registerEvents(new PrismOraclePlayerListener(this), this);
+			getServer().getPluginManager().registerEvents(new OraclePlayerListener(this), this);
 			
 			// Register tasks
 			catchUncaughtDisconnects();
@@ -116,16 +115,7 @@ public class Oracle extends JavaPlugin {
 	 */
 	public void checkPluginDependancies(){
 		
-//		// Prism 
-//		Plugin _tempPrism = getServer().getPluginManager().getPlugin("Prism");
-//		if (_tempPrism != null) {
-//			prism = (Prism)_tempPrism;
-//			prism.log("Prism Core (anti-grief) found!");
-//		}
-//		else {
-//			prism.log("Prism Core (anti-grief) not found. Plugin add-on may not run.");
-//			this.disablePlugin();
-//		}
+
 	}
 	
 	
@@ -136,15 +126,15 @@ public class Oracle extends JavaPlugin {
 	public DataSource initDbPool(){
 		
 		DataSource pool = null;
-		String dns = "jdbc:mysql://"+config.getString("prism.mysql.hostname")+":"+config.getString("prism.mysql.port")+"/"+config.getString("prism.mysql.database");
+		String dns = "jdbc:mysql://"+config.getString("oracle.mysql.hostname")+":"+config.getString("oracle.mysql.port")+"/"+config.getString("oracle.mysql.database");
 		pool = new DataSource();
 		pool.setDriverClassName("com.mysql.jdbc.Driver");
 		pool.setUrl(dns);
-	    pool.setUsername(config.getString("prism.mysql.username"));
-	    pool.setPassword(config.getString("prism.mysql.password"));
-		pool.setMaxActive( config.getInt("prism.database.max-pool-connections") );
-		pool.setMaxIdle( config.getInt("prism.database.max-pool-connections") );
-	    pool.setMaxWait( config.getInt("prism.database.max-wait") );
+	    pool.setUsername(config.getString("oracle.mysql.username"));
+	    pool.setPassword(config.getString("oracle.mysql.password"));
+		pool.setMaxActive( config.getInt("oracle.database.max-pool-connections") );
+		pool.setMaxIdle( config.getInt("oracle.database.max-pool-connections") );
+	    pool.setMaxWait( config.getInt("oracle.database.max-wait") );
 	
 		return pool;
 	}
@@ -257,12 +247,12 @@ public class Oracle extends JavaPlugin {
 	 */
 	public void logDbError( SQLException e ){
 		log("Database connection error: " + e.getMessage());
-		if(e.getMessage().contains("marked as crashed")){
-			String[] msg = new String[2];
-			msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
-			msg[1] = "Try running `CHECK TABLE prism_actions` and then `REPAIR TABLE prism_actions`.";
-			logSection(msg);
-		}
+//		if(e.getMessage().contains("marked as crashed")){
+//			String[] msg = new String[2];
+//			msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
+//			msg[1] = "Try running `CHECK TABLE oracle_joins` and then `REPAIR TABLE oracle_joins`.";
+//			logSection(msg);
+//		}
 		e.printStackTrace();
 	}
 	

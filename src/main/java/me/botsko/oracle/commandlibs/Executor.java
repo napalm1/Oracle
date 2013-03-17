@@ -37,7 +37,9 @@ public class Executor implements CommandExecutor {
 	
 	/**
 	 * 
-	 * @param prism
+	 * @param plugin
+	 * @param mode
+	 * @param perm_base
 	 */
 	public Executor( Plugin plugin, String mode, String perm_base ) {
 		this.mode = (mode == null ? "command" : mode);
