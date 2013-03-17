@@ -1,7 +1,6 @@
-name: PrismOracle
-main: me.botsko.prismoracle.PrismOracle
+name: Oracle
+main: me.botsko.oracle.Oracle
 version: nightly
-softdepend: [Prism]
 default: op
 commands:
    seen:

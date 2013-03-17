@@ -1,7 +1,7 @@
-package me.botsko.prismoracle.listeners;
+package me.botsko.oracle.listeners;
 
-import me.botsko.prismoracle.PrismOracle;
-import me.botsko.prismoracle.utils.JoinUtil;
+import me.botsko.oracle.Oracle;
+import me.botsko.oracle.utils.JoinUtil;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,14 +15,14 @@ public class PrismOraclePlayerListener implements Listener {
 	/**
 	 * 
 	 */
-	protected PrismOracle plugin;
+	protected Oracle plugin;
 	
 	
 	/**
 	 * 
 	 * @param plugin
 	 */
-	public PrismOraclePlayerListener( PrismOracle plugin ){
+	public PrismOraclePlayerListener( Oracle plugin ){
 		this.plugin = plugin;
 	}
 	

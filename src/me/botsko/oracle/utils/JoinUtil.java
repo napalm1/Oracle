@@ -1,11 +1,11 @@
-package me.botsko.prismoracle.utils;
+package me.botsko.oracle.utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import me.botsko.prism.Prism;
+import me.botsko.oracle.Oracle;
 
 public class JoinUtil {
 	
@@ -17,7 +17,7 @@ public class JoinUtil {
 	 */
 	public static void registerPlayerJoin( String player, String ip, int online_count ){
 		try {
-			Connection conn = Prism.dbc();
+			Connection conn = Oracle.dbc();
 	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_oracle_joins (player_count,player,player_join,ip) VALUES (?,?,now(),?)");
 	        s.setInt(1, online_count);
 	        s.setString(2, player);
@@ -39,7 +39,7 @@ public class JoinUtil {
 	public static void registerPlayerQuit( String player ){
 		try {
 			
-			Connection conn = Prism.dbc();
+			Connection conn = Oracle.dbc();
 			
 			// Set the quit date for the players join session
 			PreparedStatement pstmt = conn.prepareStatement("UPDATE prism_oracle_joins SET player_quit = now() WHERE player_quit IS NULL AND player = ?");
@@ -74,10 +74,10 @@ public class JoinUtil {
 	 * @param person
 	 * @param account_name
 	 */
-	public static void forceDateForOfflinePlayers( Prism prism, String users ){
+	public static void forceDateForOfflinePlayers( String users ){
 		try {
 
-			Connection conn = Prism.dbc();
+			Connection conn = Oracle.dbc();
 			
 			// Ensure we ignore online players
 			if(!users.isEmpty()){

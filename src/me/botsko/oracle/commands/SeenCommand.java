@@ -1,19 +1,19 @@
-package me.botsko.prismoracle.commands;
+package me.botsko.oracle.commands;
 
 import java.text.ParseException;
 import java.util.Date;
 
-import me.botsko.prism.commandlibs.CallInfo;
-import me.botsko.prism.commandlibs.SubHandler;
-import me.botsko.prismoracle.PrismOracle;
-import me.botsko.prismoracle.utils.SeenUtil;
+import me.botsko.oracle.Oracle;
+import me.botsko.oracle.commandlibs.CallInfo;
+import me.botsko.oracle.commandlibs.SubHandler;
+import me.botsko.oracle.utils.SeenUtil;
 
 public class SeenCommand implements SubHandler {
 	
 	/**
 	 * 
 	 */
-	private PrismOracle plugin;
+	private Oracle plugin;
 	
 	
 	/**
@@ -21,7 +21,7 @@ public class SeenCommand implements SubHandler {
 	 * @param plugin
 	 * @return 
 	 */
-	public SeenCommand(PrismOracle plugin) {
+	public SeenCommand(Oracle plugin) {
 		this.plugin = plugin;
 	}
 	

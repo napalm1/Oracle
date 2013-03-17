@@ -1,4 +1,4 @@
-package me.botsko.prismoracle.utils;
+package me.botsko.oracle.utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import me.botsko.prism.Prism;
+import me.botsko.oracle.Oracle;
 
 public class SeenUtil {
 	
@@ -24,7 +24,7 @@ public class SeenUtil {
 		boolean seen = false;
 		try {
 			
-			Connection conn = Prism.dbc();
+			Connection conn = Oracle.dbc();
             
             PreparedStatement s;
     		s = conn.prepareStatement ("SELECT id FROM joins WHERE username = ? ORDER BY player_join LIMIT 1;");
@@ -57,7 +57,7 @@ public class SeenUtil {
 		Date joined = null;
 		try {
 			
-			Connection conn = Prism.dbc();
+			Connection conn = Oracle.dbc();
             
             PreparedStatement s;
     		s = conn.prepareStatement ("SELECT player_join FROM joins WHERE username = ? ORDER BY player_join LIMIT 1;");
@@ -95,7 +95,7 @@ public class SeenUtil {
 		Date seen = null;
 		try {
 			
-			Connection conn = Prism.dbc();
+			Connection conn = Oracle.dbc();
             
             PreparedStatement s;
     		s = conn.prepareStatement ("SELECT player_quit FROM joins WHERE username = ? AND player_quit IS NOT NULL ORDER BY player_quit DESC LIMIT 1;");
