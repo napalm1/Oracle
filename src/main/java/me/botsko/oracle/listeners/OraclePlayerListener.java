@@ -36,6 +36,8 @@ public class OraclePlayerListener implements Listener {
 	 */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
+    	
+    	if( plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
         
         Player player = event.getPlayer();
         String username = player.getName();
@@ -53,6 +55,8 @@ public class OraclePlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLogin(final PlayerLoginEvent event){
+    	
+    	if( plugin.getConfig().getBoolean("oracle.bans.enabled") ) return;
     	
     	Player player = event.getPlayer();
     	
@@ -72,6 +76,7 @@ public class OraclePlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(final PlayerQuitEvent event){
+    	if( plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
         JoinUtil.registerPlayerQuit( event.getPlayer().getName() );
     }
 }
