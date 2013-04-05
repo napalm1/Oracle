@@ -177,18 +177,20 @@ public class Oracle extends JavaPlugin {
 	 * this will force close all records except for players currently online.
 	 */
 	public void catchUncaughtDisconnects(){
-		getServer().getScheduler().runTaskTimerAsynchronously(this, new Runnable(){
-		    public void run(){
-		    	String on_users = "";
-				for(Player pl: getServer().getOnlinePlayers()) {
-					on_users += "'"+pl.getName()+"',";
-				}
-				if(!on_users.isEmpty()){
-					on_users = on_users.substring(0, on_users.length()-1);
-				}
-				JoinUtil.forceDateForOfflinePlayers( on_users );
-		    }
-		}, 1200L, 1200L);
+		if( getConfig().getBoolean("oracle.joins.enabled") ){
+			getServer().getScheduler().runTaskTimerAsynchronously(this, new Runnable(){
+			    public void run(){
+			    	String on_users = "";
+					for(Player pl: getServer().getOnlinePlayers()) {
+						on_users += "'"+pl.getName()+"',";
+					}
+					if(!on_users.isEmpty()){
+						on_users = on_users.substring(0, on_users.length()-1);
+					}
+					JoinUtil.forceDateForOfflinePlayers( on_users );
+			    }
+			}, 1200L, 1200L);
+		}
 	}
 	
 	

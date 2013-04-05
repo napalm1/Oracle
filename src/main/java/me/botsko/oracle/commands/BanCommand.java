@@ -57,7 +57,7 @@ public class BanCommand implements SubHandler {
 		// Is player online - kick them with ban reason
 		Player bannedPlayer = plugin.getServer().getPlayer( username );
 		if( bannedPlayer != null ){
-			bannedPlayer.kickPlayer( reason );
+			bannedPlayer.kickPlayer( "Banned: " + reason );
 		}
 	
 		// Save to db
