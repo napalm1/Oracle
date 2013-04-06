@@ -22,26 +22,27 @@ public class SeenUtil {
 	 */
 	public static boolean hasPlayerBeenSeen( String username ) throws ParseException{
 		boolean seen = false;
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
 		try {
 			
-			Connection conn = Oracle.dbc();
-            
-            PreparedStatement s;
+			conn = Oracle.dbc();
     		s = conn.prepareStatement ("SELECT id FROM oracle_joins WHERE username = ? ORDER BY player_join LIMIT 1;");
     		s.setString(1, username);
     		s.executeQuery();
-    		ResultSet rs = s.getResultSet();
+    		rs = s.getResultSet();
     		
     		if(rs.first()){
     			seen = true;
     		}
-    		
-    		rs.close();
-    		s.close();
-            conn.close();
             
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 		return seen;
 	}
@@ -55,15 +56,16 @@ public class SeenUtil {
 	 */
 	public static Date getPlayerFirstSeen( String username ) throws ParseException{
 		Date joined = null;
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
 		try {
 			
-			Connection conn = Oracle.dbc();
-            
-            PreparedStatement s;
+			conn = Oracle.dbc();
     		s = conn.prepareStatement ("SELECT player_join FROM oracle_joins WHERE username = ? ORDER BY player_join LIMIT 1;");
     		s.setString(1, username);
     		s.executeQuery();
-    		ResultSet rs = s.getResultSet();
+    		rs = s.getResultSet();
     		
     		if(rs.first()){
     			String join = rs.getString("player_join");
@@ -71,17 +73,15 @@ public class SeenUtil {
 	        	formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	        	joined = (Date)formatter.parse( join );
     		}
-    		
-    		rs.close();
-    		s.close();
-            conn.close();
-            
-            return joined;
             
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
-		return null;
+		return joined;
 	}
 	
 	
@@ -93,15 +93,16 @@ public class SeenUtil {
 	 */
 	public static Date getPlayerLastSeen( String username ) throws ParseException{
 		Date seen = null;
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
 		try {
 			
-			Connection conn = Oracle.dbc();
-            
-            PreparedStatement s;
+			conn = Oracle.dbc();
     		s = conn.prepareStatement ("SELECT player_quit FROM oracle_joins WHERE username = ? AND player_quit IS NOT NULL ORDER BY player_quit DESC LIMIT 1;");
     		s.setString(1, username);
     		s.executeQuery();
-    		ResultSet rs = s.getResultSet();
+    		rs = s.getResultSet();
     		
     		if(rs.first()){
 	    		String join = rs.getString("player_quit");
@@ -110,15 +111,13 @@ public class SeenUtil {
 	        	seen = (Date)formatter.parse( join );
     		}
     		
-    		rs.close();
-    		s.close();
-            conn.close();
-            
-            return seen;
-            
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
-		return null;
+		return seen;
 	}
 }

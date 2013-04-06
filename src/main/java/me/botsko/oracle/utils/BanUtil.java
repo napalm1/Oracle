@@ -16,17 +16,20 @@ public class BanUtil {
 	 * @param account_name
 	 */
 	public static void banByUsername( String moderator, String player, String reason ){
+		Connection conn = null;
+		PreparedStatement s = null;
 		try {
-			Connection conn = Oracle.dbc();
-	        PreparedStatement s = conn.prepareStatement("INSERT INTO oracle_bans (player,moderator,reason) VALUES (?,?,?)");
+			conn = Oracle.dbc();
+	        s = conn.prepareStatement("INSERT INTO oracle_bans (player,moderator,reason) VALUES (?,?,?)");
 	        s.setString(1, player);
 	        s.setString(2, moderator);
 	        s.setString(3, reason);
 	        s.executeUpdate();
-    		s.close();
-    		conn.close();
         } catch (SQLException e){
             e.printStackTrace();
+        } finally {
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 	}
 	
@@ -37,11 +40,13 @@ public class BanUtil {
 	 * @param account_name
 	 */
 	public static void unbanByUsername( String moderator, String player ){
+		Connection conn = null;
+		PreparedStatement s = null;
 		try {
-			Connection conn = Oracle.dbc();
+			conn = Oracle.dbc();
 			
 			// Add unban record
-	        PreparedStatement s = conn.prepareStatement("INSERT INTO oracle_unbans (player,moderator) VALUES (?,?)");
+	        s = conn.prepareStatement("INSERT INTO oracle_unbans (player,moderator) VALUES (?,?)");
 	        s.setString(1, player);
 	        s.setString(2, moderator);
 	        s.executeUpdate();
@@ -50,11 +55,11 @@ public class BanUtil {
 	        s = conn.prepareStatement("UPDATE oracle_bans SET unbanned = 1 WHERE player = ?");
 	        s.setString(1, player);
 	        s.executeUpdate();
-	        
-    		s.close();
-    		conn.close();
         } catch (SQLException e){
             e.printStackTrace();
+        } finally {
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 	}
 	
@@ -65,27 +70,27 @@ public class BanUtil {
 	 * @throws Exception 
 	 */
 	public static void playerMayJoin( String username ) throws Exception{
-		
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
 		try {
 			
-			Connection conn = Oracle.dbc();
-            
-            PreparedStatement s;
+			conn = Oracle.dbc();
     		s = conn.prepareStatement ("SELECT * FROM oracle_bans WHERE player = ? AND unbanned = 0 ORDER BY id DESC LIMIT 1");
     		s.setString(1, username);
     		s.executeQuery();
-    		ResultSet rs = s.getResultSet();
+    		rs = s.getResultSet();
     		
     		if(rs.first()){
     			throw new Exception( rs.getString("reason") );
     		}
-    		
-    		rs.close();
-    		s.close();
-            conn.close();
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 	}
 }

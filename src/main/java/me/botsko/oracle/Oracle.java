@@ -141,8 +141,26 @@ public class Oracle extends JavaPlugin {
 		pool.setMaxActive( config.getInt("oracle.database.max-pool-connections") );
 		pool.setMaxIdle( config.getInt("oracle.database.max-pool-connections") );
 	    pool.setMaxWait( config.getInt("oracle.database.max-wait") );
+	    pool.setRemoveAbandoned(true);
+		pool.setRemoveAbandonedTimeout(60);
+		pool.setTestOnBorrow(true);
+		pool.setValidationQuery("/* ping */SELECT 1");
+		pool.setValidationInterval(30000);
 	
 		return pool;
+	}
+	
+	
+	/**
+	 * Attempt to rebuild the pool, useful for reloads and failed database
+	 * connections being restored
+	 */
+	public void rebuildPool() {
+		// Close pool connections when plugin disables
+		if (pool != null) {
+			pool.close();
+		}
+		pool = initDbPool();
 	}
 	
 	
@@ -158,17 +176,60 @@ public class Oracle extends JavaPlugin {
 	/**
 	 * 
 	 * @return
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
-	public static Connection dbc(){
+	public static Connection dbc() {
 		Connection con = null;
 		try {
 			con = pool.getConnection();
 		} catch (SQLException e) {
 			System.out.print("Database connection failed. " + e.getMessage());
-			e.printStackTrace();
+			if (!e.getMessage().contains("Pool empty")) {
+				e.printStackTrace();
+			}
 		}
 		return con;
+	}
+	
+	
+	/**
+	 * Attempt to reconnect to the database
+	 * @return
+	 * @throws SQLException 
+	 */
+	protected boolean attemptToRescueConnection( SQLException e ) throws SQLException{
+		if( e.getMessage().contains("connection closed") ){
+			rebuildPool();
+			if( pool != null ){
+				Connection conn = dbc();
+				if( conn != null && !conn.isClosed() ){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void handleDatabaseException(SQLException e) {
+		// Attempt to rescue
+		try {
+			if( attemptToRescueConnection( e ) ){
+				return;
+			}
+		} catch (SQLException e1){
+		}
+		log("Database connection error: " + e.getMessage());
+		if (e.getMessage().contains("marked as crashed")) {
+			String[] msg = new String[2];
+			msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
+			msg[1] = "Try running `CHECK TABLE prism_actions` and then `REPAIR TABLE prism_actions`.";
+			logSection(msg);
+		}
+		e.printStackTrace();
 	}
 	
 	
