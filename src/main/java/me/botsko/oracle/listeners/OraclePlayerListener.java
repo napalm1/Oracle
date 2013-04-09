@@ -1,5 +1,9 @@
 package me.botsko.oracle.listeners;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import me.botsko.oracle.Oracle;
 import me.botsko.oracle.utils.BanUtil;
 import me.botsko.oracle.utils.JoinUtil;
@@ -40,12 +44,37 @@ public class OraclePlayerListener implements Listener {
     	if( !plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
         
         Player player = event.getPlayer();
-        String username = player.getName();
-        String ip = player.getAddress().getAddress().getHostAddress().toString();
-
-        // Save join into table
-        JoinUtil.registerPlayerJoin( username, ip, plugin.getServer().getOnlinePlayers().length );
+        final String username = player.getName();
+        final String ip = player.getAddress().getAddress().getHostAddress().toString();
         
+        // Determine if we're using bungeecord as a proxy
+        if( plugin.getConfig().getBoolean("oracle.joins.use-bungeecord") ){
+	        // Pass the information from bungee so we properly track the ip
+	        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+	            public void run() {
+	                try {
+	                	
+	                    ByteArrayOutputStream b = new ByteArrayOutputStream();
+	                    DataOutputStream out = new DataOutputStream(b);
+	
+	                    try {
+	                        out.writeUTF("IP");
+	                    } catch (IOException e){
+	                    }
+	
+	                    plugin.getServer().getPlayerExact( username ).sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+	
+	                } catch (Exception exception) {
+	                    exception.printStackTrace();
+	                }
+	            }
+	        }, 30L);
+        } else {
+
+	        // Save join into table
+	        JoinUtil.registerPlayerJoin( username, ip, plugin.getServer().getOnlinePlayers().length );
+	        
+        }
     }
     
     

@@ -192,45 +192,45 @@ public class Oracle extends JavaPlugin {
 	}
 	
 	
-	/**
-	 * Attempt to reconnect to the database
-	 * @return
-	 * @throws SQLException 
-	 */
-	protected boolean attemptToRescueConnection( SQLException e ) throws SQLException{
-		if( e.getMessage().contains("connection closed") ){
-			rebuildPool();
-			if( pool != null ){
-				Connection conn = dbc();
-				if( conn != null && !conn.isClosed() ){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+//	/**
+//	 * Attempt to reconnect to the database
+//	 * @return
+//	 * @throws SQLException 
+//	 */
+//	protected boolean attemptToRescueConnection( SQLException e ) throws SQLException{
+//		if( e.getMessage().contains("connection closed") ){
+//			rebuildPool();
+//			if( pool != null ){
+//				Connection conn = dbc();
+//				if( conn != null && !conn.isClosed() ){
+//					return true;
+//				}
+//			}
+//		}
+//		return false;
+//	}
 	
 	
-	/**
-	 * 
-	 */
-	public void handleDatabaseException(SQLException e) {
-		// Attempt to rescue
-		try {
-			if( attemptToRescueConnection( e ) ){
-				return;
-			}
-		} catch (SQLException e1){
-		}
-		log("Database connection error: " + e.getMessage());
-		if (e.getMessage().contains("marked as crashed")) {
-			String[] msg = new String[2];
-			msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
-			msg[1] = "Try running `CHECK TABLE prism_actions` and then `REPAIR TABLE prism_actions`.";
-			logSection(msg);
-		}
-		e.printStackTrace();
-	}
+//	/**
+//	 * 
+//	 */
+//	public void handleDatabaseException(SQLException e) {
+//		// Attempt to rescue
+//		try {
+//			if( attemptToRescueConnection( e ) ){
+//				return;
+//			}
+//		} catch (SQLException e1){
+//		}
+//		log("Database connection error: " + e.getMessage());
+//		if (e.getMessage().contains("marked as crashed")) {
+//			String[] msg = new String[2];
+//			msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
+//			msg[1] = "Try running `CHECK TABLE prism_actions` and then `REPAIR TABLE prism_actions`.";
+//			logSection(msg);
+//		}
+//		e.printStackTrace();
+//	}
 	
 	
 	/**
@@ -339,6 +339,10 @@ public class Oracle extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable(){
+		// Close pool connections when plugin disables
+			if (pool != null) {
+				pool.close();
+			}
 		log("Closing plugin.");
 	}
 }

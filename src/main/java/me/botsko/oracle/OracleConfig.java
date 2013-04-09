@@ -39,9 +39,10 @@ public class OracleConfig extends ConfigBase {
 		config.addDefault("oracle.mysql.database", "minecraft");
 		config.addDefault("oracle.mysql.port", 3306);
 		
-		
+		// Features
 		config.addDefault("oracle.bans.enabled", true);
 		config.addDefault("oracle.joins.enabled", true);
+		config.addDefault("oracle.joins.use-bungeecord", false);
 		
 		// Copy defaults
 		config.options().copyDefaults(true);

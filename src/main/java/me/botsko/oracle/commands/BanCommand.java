@@ -63,9 +63,6 @@ public class BanCommand implements SubHandler {
 		// Save to db
 		BanUtil.banByUsername( moderator, username, reason );
 		
-		// Success
-		call.getSender().sendMessage( plugin.messenger.playerHeaderMsg("Player has been banned.") );
-		
 		// Tell everyone
 		plugin.getServer().broadcastMessage( plugin.messenger.playerHeaderMsg( moderator + " banned " + username + " for: " + reason ) );
     
