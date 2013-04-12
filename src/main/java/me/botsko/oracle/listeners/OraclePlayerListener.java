@@ -70,7 +70,7 @@ public class OraclePlayerListener implements Listener {
 	            }
 	        }, 30L);
         } else {
-
+        	
 	        // Save join into table
 	        JoinUtil.registerPlayerJoin( username, ip, plugin.getServer().getOnlinePlayers().length );
 	        

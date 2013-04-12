@@ -1,7 +1,6 @@
 package me.botsko.oracle.commands;
 
 import java.text.ParseException;
-import java.util.Date;
 
 import me.botsko.oracle.Oracle;
 import me.botsko.oracle.commandlibs.CallInfo;
@@ -41,23 +40,12 @@ public class SeenCommand implements SubHandler {
 		} else {
 			username = call.getPlayer().getName();
 		}
-	
-
-    	Date joined;
+		
+		call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg( "Join & Last Seen Dates for " + username ) );
 		try {
-			joined = SeenUtil.getPlayerFirstSeen(username);
-			call.getSender().sendMessage( plugin.messenger.playerMsg("Joined " + joined) );
-		} catch (ParseException e1) {
-			// @todo player error
-		}
-    	
-    	
-    	Date seen;
-		try {
-			seen = SeenUtil.getPlayerLastSeen(username);
-			call.getSender().sendMessage( plugin.messenger.playerMsg("Last Seen " + seen) );
-		} catch (ParseException e) {
-			// @todo player error
+			call.getSender().sendMessage( plugin.messenger.playerMsg("Joined " + SeenUtil.getPlayerFirstSeen(username)) );
+			call.getSender().sendMessage( plugin.messenger.playerMsg("Last Seen " + SeenUtil.getPlayerLastSeen(username)) );
+		} catch (ParseException e){
 		}
 	}
 }

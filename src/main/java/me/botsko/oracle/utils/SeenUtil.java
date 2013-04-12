@@ -28,7 +28,7 @@ public class SeenUtil {
 		try {
 			
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT id FROM oracle_joins WHERE username = ? ORDER BY player_join LIMIT 1;");
+    		s = conn.prepareStatement ("SELECT id FROM oracle_joins WHERE player = ? ORDER BY player_join LIMIT 1;");
     		s.setString(1, username);
     		s.executeQuery();
     		rs = s.getResultSet();
@@ -62,7 +62,7 @@ public class SeenUtil {
 		try {
 			
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT player_join FROM oracle_joins WHERE username = ? ORDER BY player_join LIMIT 1;");
+    		s = conn.prepareStatement ("SELECT player_join FROM oracle_joins WHERE player = ? ORDER BY player_join LIMIT 1;");
     		s.setString(1, username);
     		s.executeQuery();
     		rs = s.getResultSet();
@@ -99,7 +99,7 @@ public class SeenUtil {
 		try {
 			
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT player_quit FROM oracle_joins WHERE username = ? AND player_quit IS NOT NULL ORDER BY player_quit DESC LIMIT 1;");
+    		s = conn.prepareStatement ("SELECT player_quit FROM oracle_joins WHERE player = ? AND player_quit IS NOT NULL ORDER BY player_quit DESC LIMIT 1;");
     		s.setString(1, username);
     		s.executeQuery();
     		rs = s.getResultSet();

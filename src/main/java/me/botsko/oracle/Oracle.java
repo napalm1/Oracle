@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import me.botsko.oracle.commands.OracleCommands;
 import me.botsko.oracle.listeners.OraclePlayerListener;
+import me.botsko.oracle.utils.BungeeCord;
 import me.botsko.oracle.utils.JoinUtil;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -85,6 +86,14 @@ public class Oracle extends JavaPlugin {
 			
 			// Load re-usable libraries
 			messenger = new Messenger( plugin_name );
+			
+			/**
+			 * Bungee Proxy
+			 */
+			if( getConfig().getBoolean("oracle.joins.use-bungeecord") ){
+				this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+				this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeCord(this));
+			}
 			
 			// Add commands
 			if( getConfig().getBoolean("oracle.bans.enabled") ){
