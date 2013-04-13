@@ -32,13 +32,13 @@ public class BungeeCord implements PluginMessageListener {
         if (channel.equals("BungeeCord")) {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
             try {
- 
+
                 String packetType = in.readUTF();
  
                 if ( packetType.equals("IP") && player.isOnline() ) {
                     String ip = in.readUTF();
                     String username = player.getName();
-                    JoinUtil.registerPlayerJoin( username, ip, plugin.getServer().getOnlinePlayers().length );
+                    JoinUtil.setPlayerSessionIp( username, ip );
                 }
             } catch (IOException e) {
                 e.printStackTrace();

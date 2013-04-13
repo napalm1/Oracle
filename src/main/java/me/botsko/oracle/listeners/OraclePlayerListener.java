@@ -47,6 +47,9 @@ public class OraclePlayerListener implements Listener {
         final String username = player.getName();
         final String ip = player.getAddress().getAddress().getHostAddress().toString();
         
+        // Save join into table
+        JoinUtil.registerPlayerJoin( username, ip, plugin.getServer().getOnlinePlayers().length );
+        
         // Determine if we're using bungeecord as a proxy
         if( plugin.getConfig().getBoolean("oracle.joins.use-bungeecord") ){
 	        // Pass the information from bungee so we properly track the ip
@@ -69,11 +72,6 @@ public class OraclePlayerListener implements Listener {
 	                }
 	            }
 	        }, 30L);
-        } else {
-        	
-	        // Save join into table
-	        JoinUtil.registerPlayerJoin( username, ip, plugin.getServer().getOnlinePlayers().length );
-	        
         }
     }
     

@@ -39,6 +39,29 @@ public class JoinUtil {
 	 * @param person
 	 * @param account_name
 	 */
+	public static void setPlayerSessionIp( String player, String ip ){
+		Connection conn = null;
+		PreparedStatement s = null;
+		try {
+			conn = Oracle.dbc();
+	        s = conn.prepareStatement("UPDATE oracle_joins SET ip = ? WHERE player_quit IS NULL AND player = ?");
+	        s.setString(1, ip);
+	        s.setString(2, player);
+	        s.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+	}
+	
+	
+	/**
+	 * 
+	 * @param person
+	 * @param account_name
+	 */
 	public static void registerPlayerQuit( String player ){
 		Connection conn = null;
 		PreparedStatement pstmt = null;
