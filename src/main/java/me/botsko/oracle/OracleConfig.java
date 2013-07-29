@@ -44,6 +44,9 @@ public class OracleConfig extends ConfigBase {
 		config.addDefault("oracle.joins.enabled", true);
 		config.addDefault("oracle.joins.use-bungeecord", false);
 		
+		// Misc
+		config.addDefault("oracle.log-command-use-to-console", true);
+		
 		// Copy defaults
 		config.options().copyDefaults(true);
 		

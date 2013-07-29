@@ -3,7 +3,13 @@ package me.botsko.oracle.listeners;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
+import me.botsko.dhmcstats.books.Guide;
+import me.botsko.dhmcstats.joins.Alts;
+import me.botsko.dhmcstats.rank.RankUtil;
+import me.botsko.dhmcstats.seen.SeenUtil;
+import me.botsko.dhmcstats.warnings.WarningUtil;
 import me.botsko.oracle.Oracle;
 import me.botsko.oracle.utils.BanUtil;
 import me.botsko.oracle.utils.JoinUtil;
@@ -12,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
@@ -32,6 +39,25 @@ public class OraclePlayerListener implements Listener {
 	public OraclePlayerListener( Oracle plugin ){
 		this.plugin = plugin;
 	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+
+        Player player = event.getPlayer();
+        String cmd = event.getMessage();
+
+        if( plugin.getConfig().getBoolean("oracle.log-command-use-to-console") ){
+	    	int x = player.getLocation().getBlockX();
+	        int y = player.getLocation().getBlockY();
+	        int z = player.getLocation().getBlockZ();
+	        plugin.log( "[Command] " + player.getName() + " " + cmd + " @" + player.getWorld().getName() + " " + x + " " + y + " " + z);
+        }
+    }
 	
 	
 	/**
@@ -73,6 +99,32 @@ public class OraclePlayerListener implements Listener {
 	            }
 	        }, 30L);
         }
+        
+        // If the user has three or more warnings, alert staff
+        WarningUtil.alertStaffOnWarnLimit(plugin, username);
+        
+//        if( !player.hasPermission("oracle.ignore-alt-check") || player.hasPermission("oracle.guide-book-on-join") ){
+//        if( !SeenUtil.hasPlayerBeenSeen( plugin, username ) ){
+//    		
+//    		// Give them a guide book
+//			Guide.giveToPlayer(player);
+//    		
+////        	List<Alts> alt_accts = JoinUtil.getPlayerAlts( plugin, username, ip );
+////    		if(!alt_accts.isEmpty()){
+////    			String alts_list = "";
+////    			int i = 1;
+////    			for(Alts alt : alt_accts){
+////    				alts_list += RankUtil.getPlayerRank( plugin, alt.username ).getRankColor() + alt.username + (i == alt_accts.size() ? "" : ", ");
+////    				i++;
+////    			}
+////    			for(Player pl: plugin.getServer().getOnlinePlayers()) {
+////            		if(pl.hasPermission("dhmcstats.warn")){
+////            			pl.sendMessage( plugin.playerMsg(username + "'s alts: " + alts_list) );
+////            		}
+////            	}
+////    		}
+//        }
+        
     }
     
     

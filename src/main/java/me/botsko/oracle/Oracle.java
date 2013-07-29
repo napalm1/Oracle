@@ -2,10 +2,13 @@ package me.botsko.oracle;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Logger;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.oracle.commands.OracleCommands;
 import me.botsko.oracle.listeners.OraclePlayerListener;
+import me.botsko.oracle.utils.AnnouncementUtil;
 import me.botsko.oracle.utils.BungeeCord;
 import me.botsko.oracle.utils.JoinUtil;
 
@@ -24,6 +27,7 @@ public class Oracle extends JavaPlugin {
 	private String plugin_version;
 	private Logger log = Logger.getLogger("Minecraft");
 	private static DataSource pool = new DataSource();
+	private int last_announcement = 0;
 	
 	/**
 	 * Public
@@ -109,6 +113,7 @@ public class Oracle extends JavaPlugin {
 			
 			// Register tasks
 			catchUncaughtDisconnects();
+			runAnnouncements();
 			
 		}
 	}
@@ -261,6 +266,36 @@ public class Oracle extends JavaPlugin {
 			    }
 			}, 1200L, 1200L);
 		}
+	}
+	
+	
+	/**
+	 * If a user disconnects in an unknown way that is never caught by onPlayerQuit,
+	 * this will force close all records except for players currently online.
+	 */
+	public void runAnnouncements(){
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+
+		    public void run() {
+
+		    	// Pull all items matching this name
+				List<String> announces = AnnouncementUtil.getActiveAnnouncements();
+				if(!announces.isEmpty()){
+					
+					if(last_announcement >= announces.size()){
+						last_announcement = 0;
+					}
+					
+					String msg = announces.get(last_announcement);
+					for(Player pl : getServer().getOnlinePlayers()) {
+			    		pl.sendMessage( TypeUtils.colorize(msg) );
+			    	}
+					log( msg );
+					
+					last_announcement++;
+				}
+		    }
+		}, 6000L, 6000L);
 	}
 	
 	

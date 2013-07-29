@@ -33,6 +33,12 @@ public class OracleCommands extends Executor {
 		.allowConsole()
 		.setHandler(new BanCommand( oracle ));
 		
+		/**
+		 * /ison
+		 */
+		addSub("ison", "oracle.ison")
+		.allowConsole()
+		.setHandler(new IsonCommand( oracle ));
 		
 		/**
 		 * /seen
