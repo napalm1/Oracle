@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
@@ -106,4 +107,21 @@ public class OraclePlayerListener implements Listener {
     	if( !plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
         JoinUtil.registerPlayerQuit( event.getPlayer().getName() );
     }
+    
+    
+    /**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.LOW)
+	public void onPlayerChat(AsyncPlayerChatEvent event){
+		
+		Player player = event.getPlayer();
+		
+		if( !plugin.getConfig().getBoolean("oracle.kick-minechat") ) return;
+		
+		if( event.getMessage().matches("connected.*MineChat") ){
+			player.kickPlayer( "MineChat is not allowed... sorry" );
+		}
+	}
 }

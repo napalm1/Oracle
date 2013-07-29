@@ -44,6 +44,8 @@ public class OracleConfig extends ConfigBase {
 		config.addDefault("oracle.joins.enabled", true);
 		config.addDefault("oracle.joins.use-bungeecord", false);
 		
+		config.addDefault("oracle.kick-minechat", true);
+		
 		// Copy defaults
 		config.options().copyDefaults(true);
 		
