@@ -26,7 +26,7 @@ public class AnnouncementUtil {
 		try {
 			conn = Oracle.dbc();
 	        
-    		s = conn.prepareStatement ("SELECT message FROM oracle_announcements WHERE is_active = 1");
+    		s = conn.prepareStatement ("SELECT type, announcement FROM oracle_announcements WHERE is_active = 1");
     		s.executeQuery();
     		ResultSet rs = s.getResultSet();
 
@@ -35,15 +35,6 @@ public class AnnouncementUtil {
     			announces.add(msg);
 			}
     		rs.close();
-    		
-//    		// pull forum announcements
-//    		s = conn.prepareStatement ("SELECT * FROM posts WHERE category_id = 9 AND announcement = 1 AND closed = 0 AND hidden = 0");
-//    		s.executeQuery();
-//    		rs = s.getResultSet();
-//    		while(rs.next()){
-//    			String msg = ChatColor.GOLD + "[forums]: " + ChatColor.RED + rs.getString("title") + " http://dhmc.us/r/"+rs.getString("id")+"";
-//    			announces.add(msg);
-//			}
 	        
         } catch (SQLException e){
             e.printStackTrace();

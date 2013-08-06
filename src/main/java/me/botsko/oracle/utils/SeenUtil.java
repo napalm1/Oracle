@@ -4,9 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import me.botsko.oracle.Oracle;
@@ -28,7 +26,7 @@ public class SeenUtil {
 		try {
 			
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT id FROM oracle_joins WHERE player = ? ORDER BY player_join LIMIT 1;");
+    		s = conn.prepareStatement ("SELECT join_id FROM oracle_joins j LEFT JOIN oracle_players p ON p.player_id = j.player_id WHERE p.player = ? ORDER BY player_join LIMIT 1;");
     		s.setString(1, username);
     		s.executeQuery();
     		rs = s.getResultSet();
@@ -62,16 +60,13 @@ public class SeenUtil {
 		try {
 			
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT player_join FROM oracle_joins WHERE player = ? ORDER BY player_join LIMIT 1;");
+    		s = conn.prepareStatement ("SELECT player_join FROM oracle_joins j LEFT JOIN oracle_players p ON p.player_id = j.player_id WHERE p.player = ? ORDER BY player_join LIMIT 1;");
     		s.setString(1, username);
     		s.executeQuery();
     		rs = s.getResultSet();
     		
     		if(rs.first()){
-    			String join = rs.getString("player_join");
-	    		DateFormat formatter ;
-	        	formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	        	joined = (Date)formatter.parse( join );
+	        	joined = new Date(rs.getLong("player_join") * 1000);
     		}
             
         } catch (SQLException e) {
@@ -99,16 +94,13 @@ public class SeenUtil {
 		try {
 			
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT player_quit FROM oracle_joins WHERE player = ? AND player_quit IS NOT NULL ORDER BY player_quit DESC LIMIT 1;");
+    		s = conn.prepareStatement ("SELECT player_quit FROM oracle_joins j LEFT JOIN oracle_players p ON p.player_id = j.player_id WHERE p.player = ? AND player_quit IS NOT NULL ORDER BY player_quit DESC LIMIT 1;");
     		s.setString(1, username);
     		s.executeQuery();
     		rs = s.getResultSet();
     		
     		if(rs.first()){
-	    		String join = rs.getString("player_quit");
-	    		DateFormat formatter ;
-	        	formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	        	seen = (Date)formatter.parse( join );
+	        	seen = new Date(rs.getLong("player_quit") * 1000);
     		}
     		
         } catch (SQLException e) {

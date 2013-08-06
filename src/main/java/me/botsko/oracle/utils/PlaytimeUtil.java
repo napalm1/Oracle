@@ -4,16 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import me.botsko.oracle.Oracle;
 
 public class PlaytimeUtil {
 
-	
 	
 	/**
 	 * 
@@ -29,7 +26,6 @@ public class PlaytimeUtil {
 			
 			conn = Oracle.dbc();
 			
-			// query for the null quit record for this player
 			s = conn.prepareStatement ("SELECT SUM(playtime) as playtime FROM oracle_joins WHERE player = ?");
 			s.setString(1, username);
 			s.executeQuery();
@@ -47,17 +43,13 @@ public class PlaytimeUtil {
 			long session_hours = 0;
 			try {
 				if(rs.first()){
-					DateFormat formatter ;
-			    	formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			    	Date joined = (Date)formatter.parse( rs.getString("player_join") );
+			    	Date joined = new Date(rs.getLong("player_join") * 1000);
 			    	Date today = new Date();
 			    	session_hours = today.getTime() - joined.getTime();
 			    	session_hours = session_hours / 1000;
 				}
 			}
 			catch ( SQLException e ) {
-				e.printStackTrace();
-			} catch (ParseException e) {
 				e.printStackTrace();
 			}
 			

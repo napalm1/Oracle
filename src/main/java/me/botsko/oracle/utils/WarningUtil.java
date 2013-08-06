@@ -84,16 +84,16 @@ public class WarningUtil {
 		try {
 			
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT id, date_created, reason, p.player, s.player as staff FROM oracle_warnings w " +
-    				"LEFT JOIN oracle_players p ON p.id = w.player_id " + 
-    				"LEFT JOIN oracle_players s ON s.id = w.staff_player_id " + 
+    		s = conn.prepareStatement ("SELECT warning_id, date_created, reason, p.player, s.player as staff FROM oracle_warnings w " +
+    				"LEFT JOIN oracle_players p ON p.player_id = w.player_id " + 
+    				"LEFT JOIN oracle_players s ON s.player_id = w.staff_player_id " + 
     				"WHERE p.player = ? AND deleted = 0");
     		s.setString(1, username);
     		s.executeQuery();
     		rs = s.getResultSet();
 
     		while(rs.next()){
-    			warnings.add( new Warning(rs.getInt("id"), rs.getLong("date_created"), rs.getString("player"), rs.getString("reason"), rs.getString("staff")) );
+    			warnings.add( new Warning(rs.getInt("warning_id"), rs.getLong("date_created"), rs.getString("player"), rs.getString("reason"), rs.getString("staff")) );
 			}
             
 		} catch (SQLException e){
@@ -118,7 +118,7 @@ public class WarningUtil {
 		try {
 			
 			conn = Oracle.dbc();
-	        s = conn.prepareStatement("UPDATE oracle_warnings SET deleted = 1 WHERE id = ?");
+	        s = conn.prepareStatement("UPDATE oracle_warnings SET deleted = 1 WHERE warning_id = ?");
 	        s.setInt(1, id);
 	        s.executeUpdate();
      
