@@ -31,7 +31,7 @@ public class SeenCommand implements SubHandler {
 	/**
 	 * Handle the command
 	 */
-	public void handle(CallInfo call) {
+	public void handle( final CallInfo call ){
 		
 		String username = null;
 		if(call.getArgs().length > 0){
@@ -44,18 +44,24 @@ public class SeenCommand implements SubHandler {
 			username = call.getPlayer().getName();
 		}
 		
-		OfflinePlayer player = Bukkit.getOfflinePlayer(username);
+		final OfflinePlayer player = Bukkit.getOfflinePlayer(username);
 		
 		if( player == null ){
 			call.getSender().sendMessage( Oracle.messenger.playerError( "Could not find a player by that name." ) );
 			return;
 		}
 		
-		call.getPlayer().sendMessage( Oracle.messenger.playerHeaderMsg( "Join & Last Seen Dates for " + username ) );
-		try {
-			call.getSender().sendMessage( Oracle.messenger.playerMsg("Joined " + SeenUtil.getPlayerFirstSeen(player)) );
-			call.getSender().sendMessage( Oracle.messenger.playerMsg("Last Seen " + SeenUtil.getPlayerLastSeen(player)) );
-		} catch (ParseException e){
-		}
+		// Check for alt accounts in async thread
+    	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+			public void run(){
+		
+				call.getPlayer().sendMessage( Oracle.messenger.playerHeaderMsg( "Join & Last Seen Dates for " + player.getName() ) );
+				try {
+					call.getSender().sendMessage( Oracle.messenger.playerMsg("Joined " + SeenUtil.getPlayerFirstSeen(player)) );
+					call.getSender().sendMessage( Oracle.messenger.playerMsg("Last Seen " + SeenUtil.getPlayerLastSeen(player)) );
+				} catch (ParseException e){
+				}
+			}
+    	});
 	}
 }

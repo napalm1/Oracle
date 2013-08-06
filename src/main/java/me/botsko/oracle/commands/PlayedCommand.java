@@ -31,23 +31,28 @@ public class PlayedCommand implements SubHandler {
 	/**
 	 * Handle the command
 	 */
-	public void handle(CallInfo call) {
+	public void handle( final CallInfo call ){
 		
 		String username = call.getSender().getName();
 		if( call.getArgs().length > 0 ){
 			username = plugin.expandName(username);
 		}
 		
-		OfflinePlayer player = Bukkit.getOfflinePlayer(username);
+		final OfflinePlayer player = Bukkit.getOfflinePlayer(username);
 		
 		if( player == null ){
 			call.getSender().sendMessage( Oracle.messenger.playerError( "Could not find a player by that name." ) );
 			return;
 		}
 		
-		Playtime playtime = PlaytimeUtil.getPlaytime( player );
-		String msg = ChatColor.GOLD + username + " has played for " + playtime.getHours() + " hours, " + playtime.getMinutes() + " minutes, and " + playtime.getSeconds() + " seconds. Nice!";
-		call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg( msg ) );
+		// Check for alt accounts in async thread
+    	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+			public void run(){
 		
+				Playtime playtime = PlaytimeUtil.getPlaytime( player );
+				String msg = ChatColor.GOLD + player.getName() + " has played for " + playtime.getHours() + " hours, " + playtime.getMinutes() + " minutes, and " + playtime.getSeconds() + " seconds. Nice!";
+				call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg( msg ) );
+			}
+    	});
 	}
 }

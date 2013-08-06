@@ -31,7 +31,7 @@ public class OracleCommands extends Executor {
 		addSub("alts", "oracle.alts")
 		.setMinArgs(1)
 		.allowConsole()
-		.setHandler(new AltsCommand());
+		.setHandler(new AltsCommand( oracle ));
 		
 		/**
 		 * /ban
@@ -46,7 +46,7 @@ public class OracleCommands extends Executor {
 		 */
 		addSub("lookup", "oracle.lookup")
 		.allowConsole()
-		.setHandler(new LookupCommand());
+		.setHandler(new LookupCommand( oracle ));
 		
 		/**
 		 * /ison

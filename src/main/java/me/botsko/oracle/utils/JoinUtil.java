@@ -371,7 +371,6 @@ public class JoinUtil {
 		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet rs = null;
-		ResultSet rs1 = null;
 		try {
 			
 			// Insert/Get Player ID
@@ -383,30 +382,25 @@ public class JoinUtil {
 			conn = Oracle.dbc();
 			
 			// Pull a list of all unique IPs this player has used
-    		s = conn.prepareStatement ("SELECT INET_NTOA(ip), i.ip_id FROM oracle_joins j LEFT JOIN oracle_ips i ON i.ip_id = j.ip_id WHERE player_id = ? AND j.ip_id != 0 GROUP BY j.ip_id");
+    		s = conn.prepareStatement ("SELECT DISTINCT p.player, i.ip " +
+    				"FROM oracle_joins j " +
+    				"JOIN oracle_ips i ON i.ip_id = j.ip_id " +
+    				"JOIN oracle_joins AS joins2 ON joins2.ip_id = i.ip_id AND joins2.player_id  != ? " +
+    				"JOIN oracle_players AS P ON joins2.player_id = p.player_id " +
+    				"WHERE j.player_id = ?");
     		s.setInt(1, player_id);
+    		s.setInt(2, player_id);
     		s.executeQuery();
     		rs = s.getResultSet();
     		
     		while(rs.next()){
 
-        		s = conn.prepareStatement ("SELECT p.player FROM oracle_joins j " +
-        				"LEFT JOIN oracle_players p ON p.player_id = j.player_id " +
-        				"WHERE ip_id = ? AND j.player_id != ? " +
-        				"GROUP BY j.player_id " +
-        				"ORDER BY p.player");
-        		s.setInt(1, rs.getInt("ip_id"));
-        		s.setInt(2, player_id);
-        		s.executeQuery();
-        		rs1 = s.getResultSet();
-	        	while(rs1.next()){
-	    			accounts.add( new Alt(rs.getString("ip"), rs1.getString("player")) );
-				}
+	    		accounts.add( new Alt(rs.getString("ip"), rs.getString("player")) );
+				
     		}   
 		} catch (SQLException e) {
             e.printStackTrace();
         } finally {
-        	if(rs1 != null) try { rs1.close(); } catch (SQLException e) {}
         	if(rs != null) try { rs.close(); } catch (SQLException e) {}
         	if(s != null) try { s.close(); } catch (SQLException e) {}
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}

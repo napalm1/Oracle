@@ -69,14 +69,18 @@ public class OraclePlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
         
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         final String username = player.getName();
         
         // Track joins
         if( plugin.getConfig().getBoolean("oracle.joins.enabled") ){
 
-	        // Save join into table
-	        JoinUtil.registerPlayerJoin( player, plugin.getServer().getOnlinePlayers().length );
+	        // Run insert record in async thread
+        	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+    			public void run(){
+    				JoinUtil.registerPlayerJoin( player, plugin.getServer().getOnlinePlayers().length );
+    			}
+        	});
 	        
 	        // Determine if we're using bungeecord as a proxy
 	        if( plugin.getConfig().getBoolean("oracle.joins.use-bungeecord") ){
@@ -122,7 +126,7 @@ public class OraclePlayerListener implements Listener {
     	
     	if( !plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
     	
-    	Player player = event.getPlayer();
+    	final Player player = event.getPlayer();
     	
     	// Give them a guide book
     	if( plugin.getConfig().getBoolean("oracle.guidebook.enabled") ){
@@ -135,28 +139,34 @@ public class OraclePlayerListener implements Listener {
 	        book.setItemMeta(meta);
 			player.getInventory().addItem( book );
     	}
+    	
+    	// Check for alt accounts in async thread
+    	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+			public void run(){
 
-    	List<Alt> alt_accts;
-		try {
-			
-			alt_accts = JoinUtil.getPlayerAlts( player );
-			
-			if( alt_accts.isEmpty() ) return;
-			
-			String alts_list = "";
-			int i = 1;
-			for(Alt alt : alt_accts){
-				alts_list += alt.username + (i == alt_accts.size() ? "" : ", ");
-				i++;
+		    	List<Alt> alt_accts;
+				try {
+					
+					alt_accts = JoinUtil.getPlayerAlts( player );
+					
+					if( alt_accts.isEmpty() ) return;
+					
+					String alts_list = "";
+					int i = 1;
+					for(Alt alt : alt_accts){
+						alts_list += alt.username + (i == alt_accts.size() ? "" : ", ");
+						i++;
+					}
+					for(Player pl: plugin.getServer().getOnlinePlayers()) {
+			    		if(pl.hasPermission("oracle.alerts.alt")){
+			    			pl.sendMessage( Oracle.messenger.playerMsg( player.getName() + "'s alts: " + alts_list) );
+			    		}
+			    	}
+					
+				} catch (Exception e) {
+				}
 			}
-			for(Player pl: plugin.getServer().getOnlinePlayers()) {
-	    		if(pl.hasPermission("oracle.alerts.alt")){
-	    			pl.sendMessage( Oracle.messenger.playerMsg( player.getName() + "'s alts: " + alts_list) );
-	    		}
-	    	}
-			
-		} catch (Exception e) {
-		}
+    	});
     }
     
     
@@ -188,9 +198,15 @@ public class OraclePlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(final PlayerQuitEvent event){
     	if( !plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
-        try {
-			JoinUtil.registerPlayerQuit( event.getPlayer() );
-		} catch (Exception e) {
-		}
+    	
+    	// Check for alt accounts in async thread
+    	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+			public void run(){
+		        try {
+					JoinUtil.registerPlayerQuit( event.getPlayer() );
+				} catch (Exception e) {
+				}
+			}
+    	});
     }
 }
