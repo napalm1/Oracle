@@ -1,6 +1,7 @@
 package me.botsko.oracle.commands;
 
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import me.botsko.oracle.Oracle;
 import me.botsko.oracle.commandlibs.CallInfo;
@@ -21,16 +22,10 @@ public class UnbanCommand implements SubHandler {
 		}
 		
 		// Who
-		String username = call.getArg(0);
-		
-		// Who unbanned
-		String moderator = "console";
-		if( call.getSender() instanceof Player ){
-			moderator = ((Player)call.getSender()).getName();
-		}
-	
+		OfflinePlayer player = Bukkit.getOfflinePlayer( call.getArg(0) );
+
 		// Save to db
-		BanUtil.unbanByUsername( moderator, username );
+		BanUtil.unbanByUsername( call.getSender(), player );
 		
 		// Success
 		call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg("Player has been unbanned.") );

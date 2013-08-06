@@ -172,7 +172,7 @@ public class OraclePlayerListener implements Listener {
     	Player player = event.getPlayer();
     	
     	try {
-			BanUtil.playerMayJoin( player.getName() );
+			BanUtil.playerMayJoin( player );
 		} catch (Exception e){
 			event.setKickMessage( "Banned. " + e.getMessage() );
 			event.setResult( Result.KICK_OTHER );
