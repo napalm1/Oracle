@@ -128,10 +128,11 @@ public class Oracle extends JavaPlugin {
 			// Register listeners
 			getServer().getPluginManager().registerEvents(new OraclePlayerListener(this), this);
 			
-			// Force offline date for everyone
-			if( getConfig().getBoolean("oracle.joins.enabled") ){
-				JoinUtil.forceDateForAllPlayers();
-			}
+			// disabled due to reload use cases
+//			// Force offline date for everyone
+//			if( getConfig().getBoolean("oracle.joins.enabled") ){
+//				JoinUtil.forceDateForAllPlayers();
+//			}
 			
 			// Register tasks
 			catchUncaughtDisconnects();
@@ -447,7 +448,7 @@ public class Oracle extends JavaPlugin {
 	 * @param message
 	 */
 	public static void debug(String message) {
-		if (config.getBoolean("prism.debug")) {
+		if (config.getBoolean("oracle.debug")) {
 			log.info("[" + plugin_name + "]: " + message);
 		}
 	}
@@ -506,10 +507,11 @@ public class Oracle extends JavaPlugin {
 	@Override
 	public void onDisable(){
 		
-		// Force offline date for everyone
-		if( getConfig().getBoolean("oracle.joins.enabled") ){
-			JoinUtil.forceDateForAllPlayers();
-		}
+		// disabled because of reload cases
+//		// Force offline date for everyone
+//		if( getConfig().getBoolean("oracle.joins.enabled") ){
+//			JoinUtil.forceDateForAllPlayers();
+//		}
 		
 		// Close pool connections when plugin disables
 		if (pool != null) {

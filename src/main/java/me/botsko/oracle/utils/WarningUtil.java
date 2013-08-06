@@ -54,7 +54,7 @@ public class WarningUtil {
 			
 			conn = Oracle.dbc();
 
-	        s = conn.prepareStatement("INSERT INTO oracle_warnings (player_id,reason,date_created,staff_player_id) VALUES (?,?,?,?)");
+	        s = conn.prepareStatement("INSERT INTO oracle_warnings (player_id,reason,epoch,staff_player_id) VALUES (?,?,?,?)");
 	        s.setInt(1, player_id);
 	        s.setString(2, reason);
 	        s.setLong(3, System.currentTimeMillis() / 1000L);
@@ -83,7 +83,7 @@ public class WarningUtil {
 		try {
 			
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT warning_id, date_created, reason, p.player, s.player as staff FROM oracle_warnings w " +
+    		s = conn.prepareStatement ("SELECT warning_id, epoch, reason, p.player, s.player as staff FROM oracle_warnings w " +
     				"LEFT JOIN oracle_players p ON p.player_id = w.player_id " + 
     				"LEFT JOIN oracle_players s ON s.player_id = w.staff_player_id " + 
     				"WHERE p.player = ? AND deleted = 0");
@@ -92,7 +92,7 @@ public class WarningUtil {
     		rs = s.getResultSet();
 
     		while(rs.next()){
-    			warnings.add( new Warning(rs.getInt("warning_id"), rs.getLong("date_created"), rs.getString("player"), rs.getString("reason"), rs.getString("staff")) );
+    			warnings.add( new Warning(rs.getInt("warning_id"), rs.getLong("epoch"), rs.getString("player"), rs.getString("reason"), rs.getString("staff")) );
 			}
             
 		} catch (SQLException e){

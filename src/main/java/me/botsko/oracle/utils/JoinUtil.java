@@ -40,6 +40,9 @@ public class JoinUtil {
     		rs = s.executeQuery();
 
     		if( rs.next() ){
+    			
+    			Oracle.debug("Found player id from database");
+    			
     			// Cache for online players
     			if( player instanceof Player ){
     				Oracle.debug("Adding online player record to cache");
@@ -75,6 +78,9 @@ public class JoinUtil {
             
             rs = s.getGeneratedKeys();
             if (rs.next()) {
+            	
+            	Oracle.debug("Saved new player record to database");
+            	
             	// Cache for online players
     			if( player instanceof Player ){
     				Oracle.debug("Adding newly-created online player record to cache");
