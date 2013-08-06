@@ -12,6 +12,7 @@ import me.botsko.oracle.utils.BanUtil;
 import me.botsko.oracle.utils.JoinUtil;
 import me.botsko.oracle.utils.WarningUtil;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +22,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 public class OraclePlayerListener implements Listener {
 	
@@ -113,15 +116,25 @@ public class OraclePlayerListener implements Listener {
      * 
      * @param event
      */
-    @EventHandler(priority = EventPriority.LOWEST)
+    @SuppressWarnings("unchecked")
+	@EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerFirstJoin(final OracleFirstTimePlayerEvent event){
     	
     	if( !plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
     	
     	Player player = event.getPlayer();
     	
-//		// Give them a guide book
-//		Guide.giveToPlayer(player);
+    	// Give them a guide book
+    	if( plugin.getConfig().getBoolean("oracle.guidebook.enabled") ){
+	        ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+	        BookMeta meta = (BookMeta) book.getItemMeta();
+	        meta.setTitle( plugin.getConfig().getString("oracle.guidebook.title") );
+	        meta.setAuthor( plugin.getConfig().getString("oracle.guidebook.author") );
+	        List<String> pages = (List<String>) plugin.getConfig().getList("oracle.guidebook.contents");
+	        meta.setPages( pages );
+	        book.setItemMeta(meta);
+			player.getInventory().addItem( book );
+    	}
 
     	List<Alt> alt_accts;
 		try {
