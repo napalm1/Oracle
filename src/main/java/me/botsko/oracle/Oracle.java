@@ -2,11 +2,13 @@ package me.botsko.oracle;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
 import me.botsko.elixr.TypeUtils;
 import me.botsko.oracle.commands.OracleCommands;
+import me.botsko.oracle.commands.WarnCommands;
 import me.botsko.oracle.listeners.OraclePlayerListener;
 import me.botsko.oracle.utils.AnnouncementUtil;
 import me.botsko.oracle.utils.BungeeCord;
@@ -34,7 +36,8 @@ public class Oracle extends JavaPlugin {
 	 */
 //	public Language lang;
 	public FileConfiguration config;
-	public Messenger messenger;
+	public static Messenger messenger;
+	public static HashMap<Player,Integer> oraclePlayers = new HashMap<Player,Integer>();
 
 	
     /**
@@ -106,6 +109,13 @@ public class Oracle extends JavaPlugin {
 			}
 			if( getConfig().getBoolean("oracle.joins.enabled") ){
 				getCommand("seen").setExecutor( (CommandExecutor) new OracleCommands(this) );
+				getCommand("played").setExecutor( (CommandExecutor) new OracleCommands(this) );
+				getCommand("playhist").setExecutor( (CommandExecutor) new OracleCommands(this) );
+				getCommand("stats").setExecutor( (CommandExecutor) new OracleCommands(this) );
+			}
+			if( getConfig().getBoolean("oracle.warnings.enabled") ){
+				getCommand("warn").setExecutor( (CommandExecutor) new WarnCommands(this) );
+				getCommand("warnings").setExecutor( (CommandExecutor) new WarnCommands(this) );
 			}
 			
 			// Register listeners
@@ -257,7 +267,8 @@ public class Oracle extends JavaPlugin {
 			    public void run(){
 			    	String on_users = "";
 					for(Player pl: getServer().getOnlinePlayers()) {
-						on_users += "'"+pl.getName()+"',";
+						int player_id = JoinUtil.lookupPlayer(pl);
+						on_users += ""+player_id+",";
 					}
 					if(!on_users.isEmpty()){
 						on_users = on_users.substring(0, on_users.length()-1);

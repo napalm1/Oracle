@@ -37,8 +37,7 @@ public class BungeeCord implements PluginMessageListener {
  
                 if ( packetType.equals("IP") && player.isOnline() ) {
                     String ip = in.readUTF();
-                    String username = player.getName();
-                    JoinUtil.setPlayerSessionIp( username, ip );
+                    JoinUtil.setPlayerSessionIp( player, ip );
                 }
             } catch (IOException e) {
                 e.printStackTrace();

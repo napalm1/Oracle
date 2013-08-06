@@ -6,9 +6,30 @@ commands:
    seen:
       description: Display join and last seen dates for a player.
       usage: /seen [player]
+   lookup:
+      description: Shows ban information for a player
+      usage: /lookup [player]
+   ison:
+      description: Check if a player is online
+      usage: /ison [player]
    ban:
       description: Ban a player from the server.
       usage: /ban [player]
    unban:
       description: Unban a player from the server.
       usage: /unban [player]
+   stats:
+      description: Shows basic stats for the server
+      usage: /stats
+   played:
+      description: Shows total playtime for player
+      usage: /played [player]
+   playhist:
+      description: Shows recent play history for a player
+      usage: /playhist [player]
+   warn:
+      description: File a warning for a player
+      usage: /warn [player] [msg]
+   warnings:
+      description: View warnings for a player
+      usage: /warnings [player] [msg]

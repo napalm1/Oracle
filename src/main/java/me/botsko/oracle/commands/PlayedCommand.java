@@ -39,7 +39,7 @@ public class PlayedCommand implements SubHandler {
 		Playtime playtime = PlaytimeUtil.getPlaytime( username );
 		
 		String msg = ChatColor.GOLD + username + " has played for " + playtime.getHours() + " hours, " + playtime.getMinutes() + " minutes, and " + playtime.getSeconds() + " seconds. Nice!";
-		call.getSender().sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
+		call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg( msg ) );
     
 	}
 }

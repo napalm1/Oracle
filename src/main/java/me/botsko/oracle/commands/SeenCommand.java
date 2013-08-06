@@ -41,10 +41,10 @@ public class SeenCommand implements SubHandler {
 			username = call.getPlayer().getName();
 		}
 		
-		call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg( "Join & Last Seen Dates for " + username ) );
+		call.getPlayer().sendMessage( Oracle.messenger.playerHeaderMsg( "Join & Last Seen Dates for " + username ) );
 		try {
-			call.getSender().sendMessage( plugin.messenger.playerMsg("Joined " + SeenUtil.getPlayerFirstSeen(username)) );
-			call.getSender().sendMessage( plugin.messenger.playerMsg("Last Seen " + SeenUtil.getPlayerLastSeen(username)) );
+			call.getSender().sendMessage( Oracle.messenger.playerMsg("Joined " + SeenUtil.getPlayerFirstSeen(username)) );
+			call.getSender().sendMessage( Oracle.messenger.playerMsg("Last Seen " + SeenUtil.getPlayerLastSeen(username)) );
 		} catch (ParseException e){
 		}
 	}

@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.bukkit.entity.Player;
 
 import me.botsko.oracle.Oracle;
 
@@ -12,18 +15,162 @@ public class JoinUtil {
 	
 	/**
 	 * 
+	 */
+	public static int lookupPlayer( Player player ){
+		
+		// Look at cache first
+		if( Oracle.oraclePlayers.containsKey(player) ){
+			return Oracle.oraclePlayers.get(player);
+		}
+
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+
+			conn = Oracle.dbc();
+    		s = conn.prepareStatement( "SELECT player_id FROM oracle_players WHERE player = ?" );
+    		s.setString(1, player.getName());
+    		rs = s.executeQuery();
+
+    		if( rs.next() ){
+    			return rs.getInt("player_id");
+    		} else {
+    			return registerPlayer( player );
+    		}
+		} catch (SQLException e) {
+//        	handleDatabaseException( e );
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+		return 0;
+	}
+	
+	
+	/**
+	 * Saves a player name to the database, and adds the id to the cache hashmap
+	 */
+	public static int registerPlayer( Player player ){
+		
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+
+			conn = Oracle.dbc();
+            s = conn.prepareStatement( "INSERT INTO oracle_players (player) VALUES (?)" , Statement.RETURN_GENERATED_KEYS);
+            s.setString(1, player.getName());
+            s.executeUpdate();
+            
+            rs = s.getGeneratedKeys();
+            if (rs.next()) {
+            	return rs.getInt(1);
+            } else {
+                throw new SQLException("Insert statement failed - no generated key obtained.");
+            }
+		} catch (SQLException e) {
+        	
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+		return 0;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static int lookupIp( String ip ){
+
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+
+			conn = Oracle.dbc();
+    		s = conn.prepareStatement( "SELECT ip_id FROM oracle_ips WHERE ip = ?" );
+    		s.setString(1, ip);
+    		rs = s.executeQuery();
+
+    		if( rs.next() ){
+    			return rs.getInt("ip_id");
+    		} else {
+    			return registerIp( ip );
+    		}
+		} catch (SQLException e) {
+//        	handleDatabaseException( e );
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+		return 0;
+	}
+	
+	
+	/**
+	 * Saves a player name to the database, and adds the id to the cache hashmap
+	 */
+	public static int registerIp( String ip ){
+		
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+
+			conn = Oracle.dbc();
+            s = conn.prepareStatement( "INSERT INTO oracle_ips (ip) VALUES (?)" , Statement.RETURN_GENERATED_KEYS);
+            s.setString(1, ip);
+            s.executeUpdate();
+            
+            rs = s.getGeneratedKeys();
+            if (rs.next()) {
+            	return rs.getInt(1);
+            } else {
+                throw new SQLException("Insert statement failed - no generated key obtained.");
+            }
+		} catch (SQLException e) {
+        	
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+		return 0;
+	}
+	
+	
+	/**
+	 * 
 	 * @param person
 	 * @param account_name
 	 */
-	public static void registerPlayerJoin( String player, String ip, int online_count ){
+	public static void registerPlayerJoin( Player player, int online_count ){
 		Connection conn = null;
 		PreparedStatement s = null;
 		try {
+			
+			final String ip = player.getAddress().getAddress().getHostAddress().toString();
+			
+			// Insert/Get IP ID
+			int ip_id = lookupIp( ip );
+			
+			// Insert/Get Player ID
+			int player_id = lookupPlayer( player );
+			
+			// Cache player id
+			Oracle.oraclePlayers.put( player, player_id );
+			
 			conn = Oracle.dbc();
-	        s = conn.prepareStatement("INSERT INTO oracle_joins (player_count,player,player_join,ip) VALUES (?,?,now(),?)");
+	        s = conn.prepareStatement("INSERT INTO oracle_joins (player_count,player_id,player_join,ip_id) VALUES (?,?,?,?)");
 	        s.setInt(1, online_count);
-	        s.setString(2, player);
-	        s.setString(3, ip);
+	        s.setInt(2, player_id);
+	        s.setLong(3, System.currentTimeMillis() / 1000L);
+	        s.setInt(4, ip_id);
 	        s.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -39,14 +186,21 @@ public class JoinUtil {
 	 * @param person
 	 * @param account_name
 	 */
-	public static void setPlayerSessionIp( String player, String ip ){
+	public static void setPlayerSessionIp( Player player, String ip ){
 		Connection conn = null;
 		PreparedStatement s = null;
 		try {
+			
+			// Insert/Get IP ID
+			int ip_id = lookupIp( ip );
+			
+			// Insert/Get Player ID
+			int player_id = lookupPlayer( player );
+			
 			conn = Oracle.dbc();
-	        s = conn.prepareStatement("UPDATE oracle_joins SET ip = ? WHERE player_quit IS NULL AND player = ?");
-	        s.setString(1, ip);
-	        s.setString(2, player);
+	        s = conn.prepareStatement("UPDATE oracle_joins SET ip_id = ? WHERE player_quit IS NULL AND pplayer_id = ?");
+	        s.setInt(1, ip_id);
+	        s.setInt(2, player_id);
 	        s.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -62,7 +216,7 @@ public class JoinUtil {
 	 * @param person
 	 * @param account_name
 	 */
-	public static void registerPlayerQuit( String player ){
+	public static void registerPlayerQuit( Player player ){
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet trs = null;
@@ -72,22 +226,15 @@ public class JoinUtil {
 			conn = Oracle.dbc();
 			
 			// Set the quit date for the players join session
-			pstmt = conn.prepareStatement("UPDATE oracle_joins SET player_quit = now() WHERE player_quit IS NULL AND player = ?");
-			pstmt.setString(1, player);
+			pstmt = conn.prepareStatement("UPDATE oracle_joins SET player_quit = ? WHERE player_quit IS NULL AND player = ?");
+			pstmt.setLong(1, System.currentTimeMillis() / 1000L);
+			pstmt.setString(2, player.getName());
 			pstmt.executeUpdate();
   
-			// Find all join sessions we must calc playtime for
-			pstmt = conn.prepareStatement ("SELECT id, TIME_TO_SEC(TIMEDIFF(player_quit,player_join)) FROM oracle_joins WHERE player = ? AND playtime IS NULL");
-			pstmt.setString(1, player);
-			pstmt.executeQuery();
-			trs = pstmt.getResultSet();
- 				
-			while( trs.next() ){
-				pstmt1 = conn.prepareStatement("UPDATE oracle_joins SET playtime = ? WHERE id = ?");
-				pstmt1.setInt(1, trs.getInt(2)); // playtime
-				pstmt1.setInt(2, trs.getInt(1)); // id
-				pstmt1.executeUpdate();
-			}
+			// Update playtime
+			pstmt = conn.prepareStatement("UPDATE oracle_joins SET playtime = (player_quit - player_join) WHERE player = ? AND playtime IS NULL");
+			pstmt.setString(1, player.getName());
+			pstmt.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,6 +244,11 @@ public class JoinUtil {
         	if(pstmt != null) try { pstmt.close(); } catch (SQLException e) {}
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
+		
+		// Remove id from cache
+		if( Oracle.oraclePlayers.containsKey(player) ){
+			Oracle.oraclePlayers.remove(player);
+		}
 	}
 	
 	
@@ -109,36 +261,27 @@ public class JoinUtil {
 		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet trs = null;
-		PreparedStatement pstmt1 = null;
 		try {
 
 			conn = Oracle.dbc();
 			
 			// Ensure we ignore online players
 			if(!users.isEmpty()){
-				users = " AND player NOT IN ("+users+")";
+				users = " AND player_id NOT IN ("+users+")";
 			}
            
 			// Log as having quit
-	        s = conn.prepareStatement( "UPDATE oracle_joins SET player_quit = now() WHERE player_quit IS NULL"+users );
+	        s = conn.prepareStatement( "UPDATE oracle_joins SET player_quit = ? WHERE player_quit IS NULL"+users );
+	        s.setLong(1, System.currentTimeMillis() / 1000L);
     		s.executeUpdate();
     		
     		// Update playtime
-	        s = conn.prepareStatement( "SELECT id, TIME_TO_SEC(TIMEDIFF(player_quit,player_join)) FROM oracle_joins WHERE playtime IS NULL"+users );
-    		s.executeQuery();
-			trs = s.getResultSet();
-			while( trs.next() ){
-				pstmt1 = conn.prepareStatement("UPDATE oracle_joins SET playtime = ? WHERE id = ?");
-				pstmt1.setInt(1, trs.getInt(2)); // playtime
-				pstmt1.setInt(2, trs.getInt(1)); // id
-				pstmt1.executeUpdate();
-				pstmt1.close();
-			}
+			s = conn.prepareStatement("UPDATE oracle_joins SET playtime = (player_quit - player_join) WHERE playtime IS NULL"+users);
+			s.executeUpdate();
     		
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-        	if(pstmt1 != null) try { pstmt1.close(); } catch (SQLException e) {}
         	if(trs != null) try { trs.close(); } catch (SQLException e) {}
         	if(s != null) try { s.close(); } catch (SQLException e) {}
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}

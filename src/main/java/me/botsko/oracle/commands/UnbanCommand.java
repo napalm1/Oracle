@@ -9,21 +9,6 @@ import me.botsko.oracle.utils.BanUtil;
 
 public class UnbanCommand implements SubHandler {
 	
-	/**
-	 * 
-	 */
-	private Oracle plugin;
-	
-	
-	/**
-	 * 
-	 * @param plugin
-	 * @return 
-	 */
-	public UnbanCommand(Oracle plugin) {
-		this.plugin = plugin;
-	}
-	
 	
 	/**
 	 * Handle the command
@@ -31,7 +16,7 @@ public class UnbanCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		if(call.getArgs().length <= 0){
-			call.getSender().sendMessage( plugin.messenger.playerError("You must provide a username to unban.") );
+			call.getSender().sendMessage( Oracle.messenger.playerError("You must provide a username to unban.") );
 			return;
 		}
 		
@@ -48,7 +33,7 @@ public class UnbanCommand implements SubHandler {
 		BanUtil.unbanByUsername( moderator, username );
 		
 		// Success
-		call.getSender().sendMessage( plugin.messenger.playerHeaderMsg("Player has been unbanned.") );
+		call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg("Player has been unbanned.") );
     
 	}
 }

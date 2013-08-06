@@ -41,9 +41,9 @@ public class IsonCommand implements SubHandler {
 		}
 		
 		if(isOnline( username )){
-			call.getSender().sendMessage( plugin.messenger.playerHeaderMsg( username + " is online" ) ); 
+			call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg( username + " is online" ) ); 
 		} else {
-			call.getSender().sendMessage( plugin.messenger.playerError( call.getArg(0) + " is not online" ) ); 
+			call.getSender().sendMessage( Oracle.messenger.playerError( call.getArg(0) + " is not online" ) ); 
 		}
 	}
 	

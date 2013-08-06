@@ -43,6 +43,7 @@ public class OracleConfig extends ConfigBase {
 		config.addDefault("oracle.bans.enabled", true);
 		config.addDefault("oracle.joins.enabled", true);
 		config.addDefault("oracle.joins.use-bungeecord", false);
+		config.addDefault("oracle.warnings.enabled", true);
 		
 		// Misc
 		config.addDefault("oracle.log-command-use-to-console", true);

@@ -32,7 +32,7 @@ public class BanCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		if(call.getArgs().length <= 0){
-			call.getSender().sendMessage( plugin.messenger.playerError("You must provide a username to ban.") );
+			call.getSender().sendMessage( Oracle.messenger.playerError("You must provide a username to ban.") );
 			return;
 		}
 		
@@ -50,8 +50,8 @@ public class BanCommand implements SubHandler {
 		
 		// Why
 		String moderator = "console";
-		if( call.getSender() instanceof Player ){
-			moderator = ((Player)call.getSender()).getName();
+		if( call.getPlayer() != null ){
+			moderator = call.getPlayer().getName();
 		}
 		
 		// Is player online - kick them with ban reason
@@ -64,7 +64,7 @@ public class BanCommand implements SubHandler {
 		BanUtil.banByUsername( moderator, username, reason );
 		
 		// Tell everyone
-		plugin.getServer().broadcastMessage( plugin.messenger.playerHeaderMsg( moderator + " banned " + username + " for: " + reason ) );
+		plugin.getServer().broadcastMessage( Oracle.messenger.playerHeaderMsg( moderator + " banned " + username + " for: " + reason ) );
     
 	}
 }

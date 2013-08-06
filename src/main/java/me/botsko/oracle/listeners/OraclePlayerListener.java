@@ -3,16 +3,11 @@ package me.botsko.oracle.listeners;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.List;
 
-import me.botsko.dhmcstats.books.Guide;
-import me.botsko.dhmcstats.joins.Alts;
-import me.botsko.dhmcstats.rank.RankUtil;
-import me.botsko.dhmcstats.seen.SeenUtil;
-import me.botsko.dhmcstats.warnings.WarningUtil;
 import me.botsko.oracle.Oracle;
 import me.botsko.oracle.utils.BanUtil;
 import me.botsko.oracle.utils.JoinUtil;
+import me.botsko.oracle.utils.WarningUtil;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -55,7 +50,7 @@ public class OraclePlayerListener implements Listener {
 	    	int x = player.getLocation().getBlockX();
 	        int y = player.getLocation().getBlockY();
 	        int z = player.getLocation().getBlockZ();
-	        plugin.log( "[Command] " + player.getName() + " " + cmd + " @" + player.getWorld().getName() + " " + x + " " + y + " " + z);
+	        plugin.log( "[Cmd] " + player.getName() + " " + cmd + " @" + player.getWorld().getName() + " " + x + " " + y + " " + z);
         }
     }
 	
@@ -66,42 +61,47 @@ public class OraclePlayerListener implements Listener {
 	 */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
-    	
-    	if( !plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
         
         Player player = event.getPlayer();
         final String username = player.getName();
-        final String ip = player.getAddress().getAddress().getHostAddress().toString();
         
-        // Save join into table
-        JoinUtil.registerPlayerJoin( username, ip, plugin.getServer().getOnlinePlayers().length );
-        
-        // Determine if we're using bungeecord as a proxy
-        if( plugin.getConfig().getBoolean("oracle.joins.use-bungeecord") ){
-	        // Pass the information from bungee so we properly track the ip
-	        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-	            public void run() {
-	                try {
-	                	
-	                    ByteArrayOutputStream b = new ByteArrayOutputStream();
-	                    DataOutputStream out = new DataOutputStream(b);
-	
-	                    try {
-	                        out.writeUTF("IP");
-	                    } catch (IOException e){
-	                    }
-	
-	                    plugin.getServer().getPlayerExact( username ).sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
-	
-	                } catch (Exception exception) {
-	                    exception.printStackTrace();
-	                }
-	            }
-	        }, 30L);
+        // Track joins
+        if( plugin.getConfig().getBoolean("oracle.joins.enabled") ){
+
+	        // Save join into table
+	        JoinUtil.registerPlayerJoin( player, plugin.getServer().getOnlinePlayers().length );
+	        
+	        // Determine if we're using bungeecord as a proxy
+	        if( plugin.getConfig().getBoolean("oracle.joins.use-bungeecord") ){
+		        // Pass the information from bungee so we properly track the ip
+		        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+		            public void run() {
+		                try {
+		                	
+		                    ByteArrayOutputStream b = new ByteArrayOutputStream();
+		                    DataOutputStream out = new DataOutputStream(b);
+		
+		                    try {
+		                        out.writeUTF("IP");
+		                    } catch (IOException e){
+		                    }
+		
+		                    plugin.getServer().getPlayerExact( username ).sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+		
+		                } catch (Exception exception) {
+		                    exception.printStackTrace();
+		                }
+		            }
+		        }, 30L);
+	        }
         }
         
-        // If the user has three or more warnings, alert staff
-        WarningUtil.alertStaffOnWarnLimit(plugin, username);
+        // Track warnings
+        if( plugin.getConfig().getBoolean("oracle.warnings.enabled") ){
+        
+	        WarningUtil.alertStaffOnWarnLimit( username );
+	        
+        }
         
 //        if( !player.hasPermission("oracle.ignore-alt-check") || player.hasPermission("oracle.guide-book-on-join") ){
 //        if( !SeenUtil.hasPlayerBeenSeen( plugin, username ) ){
@@ -156,6 +156,6 @@ public class OraclePlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(final PlayerQuitEvent event){
     	if( !plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
-        JoinUtil.registerPlayerQuit( event.getPlayer().getName() );
+        JoinUtil.registerPlayerQuit( event.getPlayer() );
     }
 }

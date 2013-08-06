@@ -1,20 +1,23 @@
 # Oracle
 
-*The Oracle* is a bukkit-based plugin with a wide range of administrative tools - including detailed playtime tracking, IP tracking, BungeeCord support, cross-server ban/unban management, player warning system, and more!
+*The Oracle* is a bukkit-based plugin with a wide range of administrative information-management - including detailed playtime tracking, IP tracking, BungeeCord support, cross-server ban/unban management, player warning system, and more!
+
+Oracle is based on dhmcStats, a custom/private plugin that formerly ran DHMC.us. Most of that functionality has been rewritten and polished for release as Oracle.
 
 
 
 ## Features Overview
 
-- Play sessions are tracked for every player. Includes join/quit timestamps, total playtime tracking, IP address tracking.
-- `/seen` - first join and most recent play dates for a player
-- View recent play history for a player `/playhist`
+- Detailed playtime tracking: Tracks join/quit timestamps, IPs, with checks for uncaught disconnects, and more.
+- Provides a detailed list of playtime - totals, etc.
+- Seen command for viewing first join and recent playtimes for players
+- View recent play history for a player with `/playhist`
 - Easily check if a player `/ison` 
 - Supports servers behind BungeeCord proxies
 - Cross-server ban/unban management. View history of all player bans - they're never lost.
-- Player warning system. 
+- Player warning system - staff is alerted if they receive three warnings.
 - Log commands and world/coordinates of their use to console
-- Scheduled announcement system
+- Schedule server-wide announcements
 - Macro system for server staff
 
 
@@ -27,3 +30,4 @@ oracle.unban
 oracle.reload
  oracle.ignore-alt-check
  oracle.guide-book-on-join
+ oracle.warn

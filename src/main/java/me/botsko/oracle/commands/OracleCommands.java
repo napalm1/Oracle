@@ -41,19 +41,46 @@ public class OracleCommands extends Executor {
 		.setHandler(new IsonCommand( oracle ));
 		
 		/**
+		 * /played
+		 */
+		addSub("played", "oracle.played")
+		.allowConsole()
+		.setHandler(new PlayedCommand( oracle ));
+		
+		/**
+		 * /playhist
+		 */
+		addSub("playhist", "oracle.played")
+		.allowConsole()
+		.setHandler(new PlayhistCommand());
+		
+		/**
 		 * /seen
 		 */
 		addSub("seen", "oracle.seen")
 		.allowConsole()
 		.setHandler(new SeenCommand( oracle ));
 		
+		/**
+		 * /stats
+		 */
+		addSub("stats", "oracle.stats")
+		.allowConsole()
+		.setHandler(new StatsCommand());
 		
 		/**
 		 * /unban
 		 */
 		addSub("unban", "oracle.unban")
 		.allowConsole()
-		.setHandler(new UnbanCommand( oracle ));
+		.setHandler(new UnbanCommand());
+		
+		/**
+		 * /unban
+		 */
+		addSub("warnings", "oracle.warnings")
+		.allowConsole()
+		.setHandler(new WarningsCommand());
 		
 		
 		/**
@@ -65,7 +92,7 @@ public class OracleCommands extends Executor {
             public void handle(CallInfo call) {
             	oracle.reloadConfig();
             	oracle.config = oracle.getConfig();
-				call.getSender().sendMessage( oracle.messenger.playerMsg("Configuration reloaded successfully.") );
+				call.getSender().sendMessage( Oracle.messenger.playerMsg("Configuration reloaded successfully.") );
             }
 		});
 	}
