@@ -1,5 +1,6 @@
 package me.botsko.oracle;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -88,12 +89,12 @@ public class Oracle extends JavaPlugin {
 			// Setup databases
 			setupDatabase();
 		
-//			try {
-//			    Metrics metrics = new Metrics(this);
-//			    metrics.start();
-//			} catch (IOException e) {
-//			    log("MCStats submission failed.");
-//			}
+			try {
+			    Metrics metrics = new Metrics(this);
+			    metrics.start();
+			} catch (IOException e) {
+			    log("MCStats submission failed.");
+			}
 			
 			// Load re-usable libraries
 			messenger = new Messenger( plugin_name );
