@@ -31,7 +31,7 @@ public class AnnouncementUtil {
     		ResultSet rs = s.getResultSet();
 
     		while(rs.next()){
-    			String msg = ChatColor.GOLD + "["+rs.getString("type")+"]: " + ChatColor.RED + rs.getString("message");
+    			String msg = ChatColor.GOLD + "["+rs.getString("type")+"]: " + ChatColor.RED + rs.getString("announcement");
     			announces.add(msg);
 			}
     		rs.close();

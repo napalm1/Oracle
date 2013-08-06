@@ -25,6 +25,7 @@ public class JoinUtil {
 		
 		// Look at cache first
 		if( Oracle.oraclePlayers.containsKey(player) ){
+			Oracle.debug("Found player id in cache");
 			return Oracle.oraclePlayers.get(player);
 		}
 
@@ -39,6 +40,11 @@ public class JoinUtil {
     		rs = s.executeQuery();
 
     		if( rs.next() ){
+    			// Cache for online players
+    			if( player instanceof Player ){
+    				Oracle.debug("Adding online player record to cache");
+    				Oracle.oraclePlayers.put( (Player) player, rs.getInt("player_id") );
+    			}
     			return rs.getInt("player_id");
     		}
 		} catch (SQLException e) {
@@ -69,6 +75,11 @@ public class JoinUtil {
             
             rs = s.getGeneratedKeys();
             if (rs.next()) {
+            	// Cache for online players
+    			if( player instanceof Player ){
+    				Oracle.debug("Adding newly-created online player record to cache");
+    				Oracle.oraclePlayers.put( (Player) player, rs.getInt(1) );
+    			}
             	return rs.getInt(1);
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
@@ -174,10 +185,7 @@ public class JoinUtil {
 				player_id = registerPlayer( player );
 				
 			}
-			
-			// Cache player id
-			Oracle.oraclePlayers.put( player, player_id );
-			
+
 			conn = Oracle.dbc();
 	        s = conn.prepareStatement("INSERT INTO oracle_joins (player_count,player_id,player_join,ip_id) VALUES (?,?,?,?)");
 	        s.setInt(1, online_count);

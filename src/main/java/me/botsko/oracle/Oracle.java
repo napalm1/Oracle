@@ -27,9 +27,9 @@ public class Oracle extends JavaPlugin {
 	/**
 	 * Protected/private
 	 */
-	private String plugin_name;
+	private static String plugin_name;
 	private String plugin_version;
-	private Logger log = Logger.getLogger("Minecraft");
+	private static Logger log = Logger.getLogger("Minecraft");
 	private static DataSource pool = new DataSource();
 	private int last_announcement = 0;
 	
@@ -37,7 +37,7 @@ public class Oracle extends JavaPlugin {
 	 * Public
 	 */
 //	public Language lang;
-	public FileConfiguration config;
+	public static FileConfiguration config;
 	public static Messenger messenger;
 	public static HashMap<Player,Integer> oraclePlayers = new HashMap<Player,Integer>();
 
@@ -440,6 +440,17 @@ public class Oracle extends JavaPlugin {
         }
         return Name;
     }
+    
+    
+    /**
+	 * 
+	 * @param message
+	 */
+	public static void debug(String message) {
+		if (config.getBoolean("prism.debug")) {
+			log.info("[" + plugin_name + "]: " + message);
+		}
+	}
     
     
     /**
