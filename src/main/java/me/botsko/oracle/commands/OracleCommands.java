@@ -25,11 +25,19 @@ public class OracleCommands extends Executor {
 		
 		final Oracle oracle = (Oracle) plugin;
 
+		/**
+		 * /alts
+		 */
+		addSub("alts", "oracle.alts")
+		.setMinArgs(1)
+		.allowConsole()
+		.setHandler(new AltsCommand());
 		
 		/**
 		 * /ban
 		 */
 		addSub("ban", "oracle.ban")
+		.setMinArgs(1)
 		.allowConsole()
 		.setHandler(new BanCommand( oracle ));
 		
@@ -44,6 +52,7 @@ public class OracleCommands extends Executor {
 		 * /ison
 		 */
 		addSub("ison", "oracle.ison")
+		.setMinArgs(1)
 		.allowConsole()
 		.setHandler(new IsonCommand( oracle ));
 		
@@ -79,11 +88,12 @@ public class OracleCommands extends Executor {
 		 * /unban
 		 */
 		addSub("unban", "oracle.unban")
+		.setMinArgs(1)
 		.allowConsole()
 		.setHandler(new UnbanCommand());
 		
 		/**
-		 * /unban
+		 * /warnings
 		 */
 		addSub("warnings", "oracle.warnings")
 		.allowConsole()
@@ -98,7 +108,7 @@ public class OracleCommands extends Executor {
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {
             	oracle.reloadConfig();
-            	oracle.config = oracle.getConfig();
+            	Oracle.config = oracle.getConfig();
 				call.getSender().sendMessage( Oracle.messenger.playerMsg("Configuration reloaded successfully.") );
             }
 		});

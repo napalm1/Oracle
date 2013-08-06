@@ -383,17 +383,17 @@ public class JoinUtil {
 			conn = Oracle.dbc();
 			
 			// Pull a list of all unique IPs this player has used
-    		s = conn.prepareStatement ("SELECT ip, ip_id FROM oracle_joins j LEFT JOIN oracle_ips i ON i.ip_id = j.ip_id WHERE player_id = ? GROUP BY j.ip_id");
+    		s = conn.prepareStatement ("SELECT INET_NTOA(ip), i.ip_id FROM oracle_joins j LEFT JOIN oracle_ips i ON i.ip_id = j.ip_id WHERE player_id = ? AND j.ip_id != 0 GROUP BY j.ip_id");
     		s.setInt(1, player_id);
     		s.executeQuery();
     		rs = s.getResultSet();
     		
     		while(rs.next()){
 
-        		s = conn.prepareStatement ("SELECT p.player FROM oracle_joins j" +
-        				"LEFT JOIN oracle_players p ON p.player_id = j.player_id" +
-        				"WHERE ip_id = ? AND j.player_id != ?" +
-        				"GROUP BY j.player_id" +
+        		s = conn.prepareStatement ("SELECT p.player FROM oracle_joins j " +
+        				"LEFT JOIN oracle_players p ON p.player_id = j.player_id " +
+        				"WHERE ip_id = ? AND j.player_id != ? " +
+        				"GROUP BY j.player_id " +
         				"ORDER BY p.player");
         		s.setInt(1, rs.getInt("ip_id"));
         		s.setInt(2, player_id);

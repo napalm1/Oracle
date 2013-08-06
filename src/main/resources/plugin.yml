@@ -3,6 +3,9 @@ main: me.botsko.oracle.Oracle
 version: nightly
 default: op
 commands:
+   alts:
+      description: Shows a list of real-time alts for a player
+      usage: /alts [player]
    seen:
       description: Display join and last seen dates for a player.
       usage: /seen [player]

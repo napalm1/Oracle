@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 
 import me.botsko.oracle.Oracle;
 import me.botsko.oracle.commandlibs.CallInfo;
@@ -22,30 +21,25 @@ public class WarningsCommand implements SubHandler {
 	 * Handle the command
 	 */
 	public void handle(CallInfo call) {
-		
-		
-		// /warnings (player)
-		if( call.getSender() instanceof ConsoleCommandSender || ( call.getPlayer() != null && call.getPlayer().hasPermission("oracle.warnings")) ){
-			
-			// If no username found, assume they mean themselves
-			String user = "";
-			if(call.getArgs().length == 0){
-				if( call.getPlayer() != null ){
-					user = call.getPlayer().getName();
-				}
-			} else {
-				user = call.getArg(1);
-			}
 
-			if(!user.isEmpty()){
-				try {
-					listWarnings(user, call.getSender());
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			} else {
-				call.getSender().sendMessage( Oracle.messenger.playerError("Player name must be specified.") );
+		// If no username found, assume they mean themselves
+		String user = "";
+		if(call.getArgs().length == 0){
+			if( call.getPlayer() != null ){
+				user = call.getPlayer().getName();
 			}
+		} else {
+			user = call.getArg(1);
+		}
+
+		if(!user.isEmpty()){
+			try {
+				listWarnings(user, call.getSender());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} else {
+			call.getSender().sendMessage( Oracle.messenger.playerError("Player name must be specified.") );
 		}
 	}
 	
@@ -65,7 +59,7 @@ public class WarningsCommand implements SubHandler {
 			return;
 		}
     	
-    	sender.sendMessage( Oracle.messenger.playerMsg( "Warnings filed for " + username + ": " ) );
+    	sender.sendMessage( Oracle.messenger.playerHeaderMsg( "Warnings filed for " + username + ": " ) );
     	
     	// Pull all items matching this name
 		List<Warning> warnings = WarningUtil.getPlayerWarnings( warned_player );

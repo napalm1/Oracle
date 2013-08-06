@@ -73,7 +73,7 @@ public class BanUtil {
 			}
 			
 			// Add unban record
-	        s = conn.prepareStatement("INSERT INTO oracle_unbans (player_id,staff_player,epoch) VALUES (?,?,?)");
+	        s = conn.prepareStatement("INSERT INTO oracle_unbans (player_id,staff_player_id,epoch) VALUES (?,?,?)");
 	        s.setInt(1, player_id);
 	        s.setInt(2, staff_player_id);
 	        s.setLong(3, System.currentTimeMillis() / 1000L);
