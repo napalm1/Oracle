@@ -3,8 +3,11 @@ package me.botsko.oracle.listeners;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import me.botsko.oracle.Oracle;
+import me.botsko.oracle.events.OracleFirstTimePlayerEvent;
+import me.botsko.oracle.utils.Alt;
 import me.botsko.oracle.utils.BanUtil;
 import me.botsko.oracle.utils.JoinUtil;
 import me.botsko.oracle.utils.WarningUtil;
@@ -46,12 +49,13 @@ public class OraclePlayerListener implements Listener {
         Player player = event.getPlayer();
         String cmd = event.getMessage();
 
-        if( plugin.getConfig().getBoolean("oracle.log-command-use-to-console") ){
-	    	int x = player.getLocation().getBlockX();
-	        int y = player.getLocation().getBlockY();
-	        int z = player.getLocation().getBlockZ();
-	        plugin.log( "[Cmd] " + player.getName() + " " + cmd + " @" + player.getWorld().getName() + " " + x + " " + y + " " + z);
-        }
+        if( !plugin.getConfig().getBoolean("oracle.log-command-use-to-console") ) return;
+        
+    	int x = player.getLocation().getBlockX();
+        int y = player.getLocation().getBlockY();
+        int z = player.getLocation().getBlockZ();
+        plugin.log( "[Cmd] " + player.getName() + " " + cmd + " @" + player.getWorld().getName() + " " + x + " " + y + " " + z);
+        
     }
 	
 	
@@ -102,29 +106,44 @@ public class OraclePlayerListener implements Listener {
 	        WarningUtil.alertStaffOnWarnLimit( username );
 	        
         }
-        
-//        if( !player.hasPermission("oracle.ignore-alt-check") || player.hasPermission("oracle.guide-book-on-join") ){
-//        if( !SeenUtil.hasPlayerBeenSeen( plugin, username ) ){
-//    		
-//    		// Give them a guide book
-//			Guide.giveToPlayer(player);
-//    		
-////        	List<Alts> alt_accts = JoinUtil.getPlayerAlts( plugin, username, ip );
-////    		if(!alt_accts.isEmpty()){
-////    			String alts_list = "";
-////    			int i = 1;
-////    			for(Alts alt : alt_accts){
-////    				alts_list += RankUtil.getPlayerRank( plugin, alt.username ).getRankColor() + alt.username + (i == alt_accts.size() ? "" : ", ");
-////    				i++;
-////    			}
-////    			for(Player pl: plugin.getServer().getOnlinePlayers()) {
-////            		if(pl.hasPermission("dhmcstats.warn")){
-////            			pl.sendMessage( plugin.playerMsg(username + "'s alts: " + alts_list) );
-////            		}
-////            	}
-////    		}
-//        }
-        
+    }
+    
+    
+    /**
+     * 
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerFirstJoin(final OracleFirstTimePlayerEvent event){
+    	
+    	if( !plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
+    	
+    	Player player = event.getPlayer();
+    	
+//		// Give them a guide book
+//		Guide.giveToPlayer(player);
+
+    	List<Alt> alt_accts;
+		try {
+			
+			alt_accts = JoinUtil.getPlayerAlts( player );
+			
+			if( alt_accts.isEmpty() ) return;
+			
+			String alts_list = "";
+			int i = 1;
+			for(Alt alt : alt_accts){
+				alts_list += alt.username + (i == alt_accts.size() ? "" : ", ");
+				i++;
+			}
+			for(Player pl: plugin.getServer().getOnlinePlayers()) {
+	    		if(pl.hasPermission("oracle.alerts.alt")){
+	    			pl.sendMessage( Oracle.messenger.playerMsg( player.getName() + "'s alts: " + alts_list) );
+	    		}
+	    	}
+			
+		} catch (Exception e) {
+		}
     }
     
     
@@ -156,6 +175,9 @@ public class OraclePlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(final PlayerQuitEvent event){
     	if( !plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
-        JoinUtil.registerPlayerQuit( event.getPlayer() );
+        try {
+			JoinUtil.registerPlayerQuit( event.getPlayer() );
+		} catch (Exception e) {
+		}
     }
 }

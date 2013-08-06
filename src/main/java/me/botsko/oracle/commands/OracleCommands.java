@@ -34,6 +34,13 @@ public class OracleCommands extends Executor {
 		.setHandler(new BanCommand( oracle ));
 		
 		/**
+		 * /lookup
+		 */
+		addSub("lookup", "oracle.lookup")
+		.allowConsole()
+		.setHandler(new LookupCommand());
+		
+		/**
 		 * /ison
 		 */
 		addSub("ison", "oracle.ison")

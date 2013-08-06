@@ -26,7 +26,7 @@ public class PlaytimeUtil {
 			
 			conn = Oracle.dbc();
 			
-			s = conn.prepareStatement ("SELECT SUM(playtime) as playtime FROM oracle_joins WHERE player = ?");
+			s = conn.prepareStatement ("SELECT SUM(playtime) as playtime FROM oracle_joins j LEFT JOIN oracle_players p ON p.player_id = j.player_id WHERE p.player = ?");
 			s.setString(1, username);
 			s.executeQuery();
 			ResultSet rs = s.getResultSet();
@@ -35,7 +35,7 @@ public class PlaytimeUtil {
 			int before_current = rs.getInt(1);
 			
 			// We also need to pull any incomplete join and calc up-to-the-minute playtime
-			s = conn.prepareStatement ("SELECT player_join FROM oracle_joins WHERE player = ? AND player_quit IS NULL");
+			s = conn.prepareStatement ("SELECT player_join FROM oracle_joins j LEFT JOIN oracle_players p ON p.player_id = j.player_id WHERE p.player = ? AND player_quit IS NULL");
 			s.setString(1, username);
 			s.executeQuery();
 			rs = s.getResultSet();

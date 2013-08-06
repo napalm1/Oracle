@@ -105,6 +105,7 @@ public class Oracle extends JavaPlugin {
 			// Add commands
 			if( getConfig().getBoolean("oracle.bans.enabled") ){
 				getCommand("ban").setExecutor( (CommandExecutor) new OracleCommands(this) );
+				getCommand("lookup").setExecutor( (CommandExecutor) new OracleCommands(this) );
 				getCommand("unban").setExecutor( (CommandExecutor) new OracleCommands(this) );
 			}
 			if( getConfig().getBoolean("oracle.joins.enabled") ){
@@ -117,6 +118,7 @@ public class Oracle extends JavaPlugin {
 				getCommand("warn").setExecutor( (CommandExecutor) new WarnCommands(this) );
 				getCommand("warnings").setExecutor( (CommandExecutor) new WarnCommands(this) );
 			}
+			getCommand("ison").setExecutor( (CommandExecutor) new OracleCommands(this) );
 			
 			// Register listeners
 			getServer().getPluginManager().registerEvents(new OraclePlayerListener(this), this);

@@ -28,6 +28,15 @@ oracle.ison
 oracle.seen
 oracle.unban
 oracle.reload
- oracle.ignore-alt-check
- oracle.guide-book-on-join
- oracle.warn
+oracle.ignore-alt-check
+oracle.guide-book-on-join
+oracle.warn
+
+
+## Events & API
+ 
+Oracle contains a ton of useful information, so we'll work on evolving these events and the API over time.
+ 
+- `OracleFirstTimePlayerEvent` - Fired the first time a player joins with a `Player getPlayer()` method.
+
+There's a basic internal API you can use by including the plugin in your project.
