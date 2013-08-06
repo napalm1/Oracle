@@ -65,6 +65,11 @@ public class WarnCommands extends Executor {
 					if( warned_player == null ){
 						warned_player = Bukkit.getOfflinePlayer( call.getArg(0) );
 					}
+					
+					if( warned_player == null ){
+						call.getSender().sendMessage( Oracle.messenger.playerError( "Could not find a player by that name." ) );
+						return;
+					}
 
 					// File warning
 					WarningUtil.fileWarning( warned_player, reason, call.getSender() );
@@ -78,9 +83,9 @@ public class WarnCommands extends Executor {
 					}
 
 					call.getSender().sendMessage( Oracle.messenger.playerMsg("Warning file successfully."));
-					
+
 					// This may be a third warning!
-					WarningUtil.alertStaffOnWarnLimit( call.getArg(0) );
+					WarningUtil.alertStaffOnWarnLimit( warned_player );
 
 				}       	
             }

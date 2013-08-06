@@ -106,7 +106,7 @@ public class OraclePlayerListener implements Listener {
         // Track warnings
         if( plugin.getConfig().getBoolean("oracle.warnings.enabled") ){
         
-	        WarningUtil.alertStaffOnWarnLimit( username );
+	        WarningUtil.alertStaffOnWarnLimit( player );
 	        
         }
     }

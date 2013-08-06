@@ -1,6 +1,8 @@
 package me.botsko.oracle.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 
 import me.botsko.oracle.Oracle;
 import me.botsko.oracle.commandlibs.CallInfo;
@@ -36,10 +38,16 @@ public class PlayedCommand implements SubHandler {
 			username = plugin.expandName(username);
 		}
 		
-		Playtime playtime = PlaytimeUtil.getPlaytime( username );
+		OfflinePlayer player = Bukkit.getOfflinePlayer(username);
 		
+		if( player == null ){
+			call.getSender().sendMessage( Oracle.messenger.playerError( "Could not find a player by that name." ) );
+			return;
+		}
+		
+		Playtime playtime = PlaytimeUtil.getPlaytime( player );
 		String msg = ChatColor.GOLD + username + " has played for " + playtime.getHours() + " hours, " + playtime.getMinutes() + " minutes, and " + playtime.getSeconds() + " seconds. Nice!";
 		call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg( msg ) );
-    
+		
 	}
 }

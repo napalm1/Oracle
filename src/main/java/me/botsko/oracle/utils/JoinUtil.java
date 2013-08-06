@@ -55,7 +55,7 @@ public class JoinUtil {
 	/**
 	 * Saves a player name to the database, and adds the id to the cache hashmap
 	 */
-	public static int registerPlayer( OfflinePlayer player ){
+	protected static int registerPlayer( OfflinePlayer player ){
 		
 		Connection conn = null;
 		PreparedStatement s = null;
@@ -87,7 +87,7 @@ public class JoinUtil {
 	/**
 	 * 
 	 */
-	public static int lookupIp( String ip ){
+	protected static int lookupIp( String ip ){
 
 		Connection conn = null;
 		PreparedStatement s = null;
@@ -118,7 +118,7 @@ public class JoinUtil {
 	/**
 	 * Saves a player name to the database, and adds the id to the cache hashmap
 	 */
-	public static int registerIp( String ip ){
+	protected static int registerIp( String ip ){
 		
 		Connection conn = null;
 		PreparedStatement s = null;
@@ -148,7 +148,8 @@ public class JoinUtil {
 	
 	
 	/**
-	 * 
+	 * Creates a join record for this player, and stores the player username/ip
+	 * to the appropriate tables.
 	 * @param person
 	 * @param account_name
 	 */
@@ -194,7 +195,8 @@ public class JoinUtil {
 	
 	
 	/**
-	 * 
+	 * Updates a current play session IP if received separately from the join event.
+	 * (Primarily for BungeeCord use)
 	 * @param person
 	 * @param account_name
 	 * @throws Exception 
@@ -228,7 +230,7 @@ public class JoinUtil {
 	
 	
 	/**
-	 * 
+	 * End a play session for the player
 	 * @param person
 	 * @param account_name
 	 * @throws Exception 

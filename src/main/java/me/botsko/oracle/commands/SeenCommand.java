@@ -2,6 +2,9 @@ package me.botsko.oracle.commands;
 
 import java.text.ParseException;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import me.botsko.oracle.Oracle;
 import me.botsko.oracle.commandlibs.CallInfo;
 import me.botsko.oracle.commandlibs.SubHandler;
@@ -41,10 +44,17 @@ public class SeenCommand implements SubHandler {
 			username = call.getPlayer().getName();
 		}
 		
+		OfflinePlayer player = Bukkit.getOfflinePlayer(username);
+		
+		if( player == null ){
+			call.getSender().sendMessage( Oracle.messenger.playerError( "Could not find a player by that name." ) );
+			return;
+		}
+		
 		call.getPlayer().sendMessage( Oracle.messenger.playerHeaderMsg( "Join & Last Seen Dates for " + username ) );
 		try {
-			call.getSender().sendMessage( Oracle.messenger.playerMsg("Joined " + SeenUtil.getPlayerFirstSeen(username)) );
-			call.getSender().sendMessage( Oracle.messenger.playerMsg("Last Seen " + SeenUtil.getPlayerLastSeen(username)) );
+			call.getSender().sendMessage( Oracle.messenger.playerMsg("Joined " + SeenUtil.getPlayerFirstSeen(player)) );
+			call.getSender().sendMessage( Oracle.messenger.playerMsg("Last Seen " + SeenUtil.getPlayerLastSeen(player)) );
 		} catch (ParseException e){
 		}
 	}

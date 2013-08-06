@@ -10,7 +10,6 @@ import java.util.List;
 import me.botsko.oracle.Oracle;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,12 +22,12 @@ public class WarningUtil {
 	 * @param plugin
 	 * @param username
 	 */
-	public static void alertStaffOnWarnLimit( String username ){
-        List<Warning> warnings = WarningUtil.getPlayerWarnings( username );
+	public static void alertStaffOnWarnLimit( OfflinePlayer player ){
+        List<Warning> warnings = WarningUtil.getPlayerWarnings( player );
         if(warnings.size() >= 3){
         	for(Player pl: Bukkit.getServer().getOnlinePlayers()) {
         		if(pl.hasPermission("oracle.warn")){
-        			pl.sendMessage( Oracle.messenger.playerMsg(username + " now has three warnings. " + ChatColor.RED + "Action must be taken.") );
+        			pl.sendMessage( Oracle.messenger.playerMsg(player.getName() + " now has three warnings.") );
         		}
         	}
         }
@@ -76,7 +75,7 @@ public class WarningUtil {
 	 * @param person
 	 * @param account_name
 	 */
-	public static List<Warning> getPlayerWarnings( String username ){
+	public static List<Warning> getPlayerWarnings( OfflinePlayer player ){
 		ArrayList<Warning> warnings = new ArrayList<Warning>();
 		Connection conn = null;
 		PreparedStatement s = null;
@@ -88,7 +87,7 @@ public class WarningUtil {
     				"LEFT JOIN oracle_players p ON p.player_id = w.player_id " + 
     				"LEFT JOIN oracle_players s ON s.player_id = w.staff_player_id " + 
     				"WHERE p.player = ? AND deleted = 0");
-    		s.setString(1, username);
+    		s.setString(1, player.getName());
     		s.executeQuery();
     		rs = s.getResultSet();
 

@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.bukkit.OfflinePlayer;
+
 import me.botsko.oracle.Oracle;
 
 public class PlaytimeUtil {
@@ -18,16 +20,19 @@ public class PlaytimeUtil {
 	 * @param account_name
 	 * @throws ParseException 
 	 */
-	public static Playtime getPlaytime( String username ) {
+	public static Playtime getPlaytime( OfflinePlayer player ) {
 		Playtime playtime = null;
 		Connection conn = null;
 		PreparedStatement s = null;
 		try {
 			
+			// Insert/Get Player ID
+			int player_id = JoinUtil.lookupPlayer( player );
+			
 			conn = Oracle.dbc();
 			
-			s = conn.prepareStatement ("SELECT SUM(playtime) as playtime FROM oracle_joins j LEFT JOIN oracle_players p ON p.player_id = j.player_id WHERE p.player = ?");
-			s.setString(1, username);
+			s = conn.prepareStatement ("SELECT SUM(playtime) as playtime FROM oracle_joins WHERE player_id = ?");
+			s.setInt(1, player_id);
 			s.executeQuery();
 			ResultSet rs = s.getResultSet();
 	
@@ -35,8 +40,8 @@ public class PlaytimeUtil {
 			int before_current = rs.getInt(1);
 			
 			// We also need to pull any incomplete join and calc up-to-the-minute playtime
-			s = conn.prepareStatement ("SELECT player_join FROM oracle_joins j LEFT JOIN oracle_players p ON p.player_id = j.player_id WHERE p.player = ? AND player_quit IS NULL");
-			s.setString(1, username);
+			s = conn.prepareStatement ("SELECT player_join FROM oracle_joins WHERE player_id = ? AND player_quit IS NULL");
+			s.setInt(1, player_id);
 			s.executeQuery();
 			rs = s.getResultSet();
 			
