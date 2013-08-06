@@ -1,6 +1,7 @@
 package me.botsko.oracle.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import me.botsko.oracle.Oracle;
@@ -59,14 +60,24 @@ public class WarnCommands extends Executor {
 						reason += call.getArgs()[i]+" ";
 					}
 					
-					String warned_by = "console";
-					if( call.getPlayer() != null ){
-						warned_by = call.getPlayer().getName();
+					// Find the player whether online or not
+					OfflinePlayer warned_player = Bukkit.getPlayer( call.getArg(0) );
+					if( warned_player == null ){
+						warned_player = Bukkit.getOfflinePlayer( call.getArg(0) );
 					}
+
+					// File warning
+					WarningUtil.fileWarning( warned_player, reason, call.getSender() );
 					
+					// Alert them
+					if( warned_player instanceof Player ){
+						Player pl = (Player) warned_player;
+						pl.sendMessage( Oracle.messenger.playerError("=== OFFICIAL WARNING FILED FOR YOU ===") );
+						pl.sendMessage( Oracle.messenger.playerMsg(reason) );
+						pl.sendMessage( Oracle.messenger.playerError("Three warnings will result in a ban!") );
+					}
+
 					call.getSender().sendMessage( Oracle.messenger.playerMsg("Warning file successfully."));
-					
-					fileWarning( call.getArg(0), reason, warned_by);
 					
 					// This may be a third warning!
 					WarningUtil.alertStaffOnWarnLimit( call.getArg(0) );
@@ -74,35 +85,5 @@ public class WarnCommands extends Executor {
 				}       	
             }
 		});
-	}
-	
-	
-	/**
-	 * Handle the command
-	 */
-	public void handle(CallInfo call) {
-		
-
-    
-	}
-	
-	
-	/**
-	 * 
-	 * @param username
-	 * @param reason
-	 * @param reporter
-	 */
-	protected void fileWarning(String username, String reason, String reporter){
-		
-		WarningUtil.fileWarning( username, reason, reporter);
-		
-		for(Player pl: Bukkit.getServer().getOnlinePlayers()) {
-			if(username.equalsIgnoreCase(pl.getName())){
-				pl.sendMessage( Oracle.messenger.playerError("=== OFFICIAL WARNING FILED FOR YOU ===") );
-				pl.sendMessage( Oracle.messenger.playerMsg(reason) );
-				pl.sendMessage( Oracle.messenger.playerError("Three warnings will result in a ban!") );
-			}
-		}
 	}
 }

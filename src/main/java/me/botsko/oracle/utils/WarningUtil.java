@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +11,8 @@ import me.botsko.oracle.Oracle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class WarningUtil {
@@ -23,10 +24,10 @@ public class WarningUtil {
 	 * @param username
 	 */
 	public static void alertStaffOnWarnLimit( String username ){
-        List<Warnings> warnings = WarningUtil.getPlayerWarnings( username );
+        List<Warning> warnings = WarningUtil.getPlayerWarnings( username );
         if(warnings.size() >= 3){
         	for(Player pl: Bukkit.getServer().getOnlinePlayers()) {
-        		if(pl.hasPermission("dhmcstats.warn")){
+        		if(pl.hasPermission("oracle.warn")){
         			pl.sendMessage( Oracle.messenger.playerMsg(username + " now has three warnings. " + ChatColor.RED + "Action must be taken.") );
         		}
         	}
@@ -39,21 +40,26 @@ public class WarningUtil {
 	 * @param person
 	 * @param account_name
 	 */
-	public static void fileWarning( String username, String reason, String filer ){
+	public static void fileWarning( OfflinePlayer player, String reason, CommandSender staff ){
 		Connection conn = null;
 		PreparedStatement s = null;
 		try {
 			
-			conn = Oracle.dbc();
-	
-	        java.util.Date date= new java.util.Date();
-	        String ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
+			// Insert/Get Player ID
+			int player_id = JoinUtil.lookupPlayer( player );
 			
-	        s = conn.prepareStatement("INSERT INTO warnings (username,reason,date_created,moderator) VALUES (?,?,?,?)");
-	        s.setString(1, username);
+			int staff_player_id = 0;
+			if( staff instanceof Player ){
+				staff_player_id = JoinUtil.lookupPlayer( (Player) staff );
+			}
+			
+			conn = Oracle.dbc();
+
+	        s = conn.prepareStatement("INSERT INTO oracle_warnings (player_id,reason,date_created,staff_player_id) VALUES (?,?,?,?)");
+	        s.setInt(1, player_id);
 	        s.setString(2, reason);
-	        s.setString(3, ts);
-	        s.setString(4, filer);
+	        s.setLong(3, System.currentTimeMillis() / 1000L);
+	        s.setInt(4, staff_player_id);
 	        s.executeUpdate();
 
 		} catch (SQLException e){
@@ -70,21 +76,24 @@ public class WarningUtil {
 	 * @param person
 	 * @param account_name
 	 */
-	public static List<Warnings> getPlayerWarnings( String username ){
-		ArrayList<Warnings> warnings = new ArrayList<Warnings>();
+	public static List<Warning> getPlayerWarnings( String username ){
+		ArrayList<Warning> warnings = new ArrayList<Warning>();
 		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet rs = null;
 		try {
 			
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT id, DATE_FORMAT(warnings.date_created,'%m/%d/%y') as warndate, reason, username, moderator FROM warnings WHERE username = ? AND deleted = 0");
+    		s = conn.prepareStatement ("SELECT id, date_created, reason, p.player, s.player as staff FROM oracle_warnings w " +
+    				"LEFT JOIN oracle_players p ON p.id = w.player_id " + 
+    				"LEFT JOIN oracle_players s ON s.id = w.staff_player_id " + 
+    				"WHERE p.player = ? AND deleted = 0");
     		s.setString(1, username);
     		s.executeQuery();
     		rs = s.getResultSet();
 
     		while(rs.next()){
-    			warnings.add( new Warnings(rs.getInt("id"), rs.getString("warndate"), rs.getString("username"), rs.getString("reason"), rs.getString("moderator")) );
+    			warnings.add( new Warning(rs.getInt("id"), rs.getLong("date_created"), rs.getString("player"), rs.getString("reason"), rs.getString("staff")) );
 			}
             
 		} catch (SQLException e){
@@ -109,7 +118,7 @@ public class WarningUtil {
 		try {
 			
 			conn = Oracle.dbc();
-	        s = conn.prepareStatement("UPDATE warnings SET deleted = 1 WHERE id = ?");
+	        s = conn.prepareStatement("UPDATE oracle_warnings SET deleted = 1 WHERE id = ?");
 	        s.setInt(1, id);
 	        s.executeUpdate();
      

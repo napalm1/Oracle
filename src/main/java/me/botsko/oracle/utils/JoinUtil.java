@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import me.botsko.oracle.Oracle;
@@ -16,7 +17,7 @@ public class JoinUtil {
 	/**
 	 * 
 	 */
-	public static int lookupPlayer( Player player ){
+	public static int lookupPlayer( OfflinePlayer player ){
 		
 		// Look at cache first
 		if( Oracle.oraclePlayers.containsKey(player) ){
@@ -52,7 +53,7 @@ public class JoinUtil {
 	/**
 	 * Saves a player name to the database, and adds the id to the cache hashmap
 	 */
-	public static int registerPlayer( Player player ){
+	public static int registerPlayer( OfflinePlayer player ){
 		
 		Connection conn = null;
 		PreparedStatement s = null;

@@ -11,7 +11,7 @@ import me.botsko.oracle.Oracle;
 import me.botsko.oracle.commandlibs.CallInfo;
 import me.botsko.oracle.commandlibs.SubHandler;
 import me.botsko.oracle.utils.WarningUtil;
-import me.botsko.oracle.utils.Warnings;
+import me.botsko.oracle.utils.Warning;
 
 public class WarningsCommand implements SubHandler {
 	
@@ -60,10 +60,10 @@ public class WarningsCommand implements SubHandler {
     	sender.sendMessage( Oracle.messenger.playerMsg( "Warnings filed for " + username + ": " ) );
     	
     	// Pull all items matching this name
-		List<Warnings> warnings = WarningUtil.getPlayerWarnings(username);
+		List<Warning> warnings = WarningUtil.getPlayerWarnings(username);
 		if(!warnings.isEmpty()){
-			for(Warnings warn : warnings){
-				sender.sendMessage( Oracle.messenger.playerMsg( "["+ warn.id + "] " + warn.datewarned + ": " + ChatColor.RED + warn.reason ) );
+			for(Warning warn : warnings){
+				sender.sendMessage( Oracle.messenger.playerMsg( "["+ warn.id + "] " + warn.epoch + ": " + ChatColor.RED + warn.reason ) );
 			}
 		} else {
 			sender.sendMessage( Oracle.messenger.playerError("No warnings filed.") );

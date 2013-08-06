@@ -1,17 +1,17 @@
 package me.botsko.oracle.utils;
 
-public class Warnings {
+public class Warning {
 	
 	public final int id;
-	public final String datewarned;
+	public final Long epoch;
 	public final String username;
 	public final String moderator;
 	public final String reason;
 	
-	public Warnings( int id, String datewarned, String username, String reason, String moderator ){
+	public Warning( int id, Long epoch, String username, String reason, String moderator ){
 		this.id = id;
 		this.username = username;
-		this.datewarned = datewarned;
+		this.epoch = epoch;
 		this.moderator = moderator;
 		this.reason = reason;
 	}
