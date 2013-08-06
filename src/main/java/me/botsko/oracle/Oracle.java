@@ -239,11 +239,11 @@ public class Oracle extends JavaPlugin {
 				return;
 			
 			String query = "CREATE TABLE IF NOT EXISTS `oracle_announcements` (" +
-					"`id` int(11) NOT NULL AUTO_INCREMENT," +
+					"`announcement_id` int(11) NOT NULL AUTO_INCREMENT," +
 					"`announcement` varchar(255) NOT NULL," +
 					"`type` varchar(16) NOT NULL," +
 					"`is_active` tinyint(1) NOT NULL," +
-					"PRIMARY KEY (`id`)" +
+					"PRIMARY KEY (`announcement_id`)" +
 					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 			Statement st = conn.createStatement();
 			st.executeUpdate(query);
@@ -255,7 +255,7 @@ public class Oracle extends JavaPlugin {
 					"`reason` varchar(155) NOT NULL," +
 					"`epoch` int(11) NOT NULL," +
 					"`unbanned` tinyint(1) NOT NULL DEFAULT '0'," +
-					"PRIMARY KEY (`id`)" +
+					"PRIMARY KEY (`ban_id`)" +
 					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
 			
@@ -290,7 +290,7 @@ public class Oracle extends JavaPlugin {
 					"`player_id` int(11) unsigned NOT NULL," +
 					"`staff_player_id` int(11) unsigned NOT NULL," +
 					"`epoch` int(11) unsigned NOT NULL," +
-					"PRIMARY KEY (`id`)" +
+					"PRIMARY KEY (`unban_id`)" +
 					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
 			

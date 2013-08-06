@@ -113,7 +113,7 @@ public class BanUtil {
 			int player_id = JoinUtil.lookupPlayer( player );
 			
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT * FROM oracle_bans WHERE player_id = ? AND unbanned = 0 DESC LIMIT 1");
+    		s = conn.prepareStatement ("SELECT * FROM oracle_bans WHERE player_id = ? AND unbanned = 0 LIMIT 1");
     		s.setInt(1, player_id);
     		s.executeQuery();
     		rs = s.getResultSet();
