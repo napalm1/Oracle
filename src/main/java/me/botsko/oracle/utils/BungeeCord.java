@@ -11,7 +11,9 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 public class BungeeCord implements PluginMessageListener {
 	
-	
+	/**
+	 * 
+	 */
 	Oracle plugin;
 	
 	
@@ -37,8 +39,10 @@ public class BungeeCord implements PluginMessageListener {
  
                 if ( packetType.equals("IP") && player.isOnline() ) {
                     String ip = in.readUTF();
-                    String username = player.getName();
-                    JoinUtil.setPlayerSessionIp( username, ip );
+                    try {
+						JoinUtil.setPlayerSessionIp( player, ip );
+					} catch (Exception e) {
+					}
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -1,6 +1,8 @@
 package me.botsko.oracle.commands;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import me.botsko.oracle.Oracle;
@@ -32,7 +34,7 @@ public class BanCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		if(call.getArgs().length <= 0){
-			call.getSender().sendMessage( plugin.messenger.playerError("You must provide a username to ban.") );
+			call.getSender().sendMessage( Oracle.messenger.playerError("You must provide a username to ban.") );
 			return;
 		}
 		
@@ -47,12 +49,7 @@ public class BanCommand implements SubHandler {
 		
 		// Who
 		String username = call.getArg(0);
-		
-		// Why
-		String moderator = "console";
-		if( call.getSender() instanceof Player ){
-			moderator = ((Player)call.getSender()).getName();
-		}
+		OfflinePlayer player = Bukkit.getOfflinePlayer( username );
 		
 		// Is player online - kick them with ban reason
 		Player bannedPlayer = plugin.getServer().getPlayer( username );
@@ -61,10 +58,10 @@ public class BanCommand implements SubHandler {
 		}
 	
 		// Save to db
-		BanUtil.banByUsername( moderator, username, reason );
+		BanUtil.banByUsername( call.getSender(), player, reason );
 		
 		// Tell everyone
-		plugin.getServer().broadcastMessage( plugin.messenger.playerHeaderMsg( moderator + " banned " + username + " for: " + reason ) );
+		plugin.getServer().broadcastMessage( Oracle.messenger.playerHeaderMsg( call.getSender().getName() + " banned " + username + " for: " + reason ) );
     
 	}
 }

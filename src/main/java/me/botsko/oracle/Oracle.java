@@ -1,11 +1,18 @@
 package me.botsko.oracle;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.oracle.commands.OracleCommands;
+import me.botsko.oracle.commands.WarnCommands;
 import me.botsko.oracle.listeners.OraclePlayerListener;
+import me.botsko.oracle.utils.AnnouncementUtil;
 import me.botsko.oracle.utils.BungeeCord;
 import me.botsko.oracle.utils.JoinUtil;
 
@@ -20,17 +27,19 @@ public class Oracle extends JavaPlugin {
 	/**
 	 * Protected/private
 	 */
-	private String plugin_name;
+	private static String plugin_name;
 	private String plugin_version;
-	private Logger log = Logger.getLogger("Minecraft");
+	private static Logger log = Logger.getLogger("Minecraft");
 	private static DataSource pool = new DataSource();
+	private int last_announcement = 0;
 	
 	/**
 	 * Public
 	 */
 //	public Language lang;
-	public FileConfiguration config;
-	public Messenger messenger;
+	public static FileConfiguration config;
+	public static Messenger messenger;
+	public static HashMap<Player,Integer> oraclePlayers = new HashMap<Player,Integer>();
 
 	
     /**
@@ -76,13 +85,16 @@ public class Oracle extends JavaPlugin {
 		}
 
 		if(isEnabled()){
+			
+			// Setup databases
+			setupDatabase();
 		
-//			try {
-//			    Metrics metrics = new Metrics(this);
-//			    metrics.start();
-//			} catch (IOException e) {
-//			    log("MCStats submission failed.");
-//			}
+			try {
+			    Metrics metrics = new Metrics(this);
+			    metrics.start();
+			} catch (IOException e) {
+			    log("MCStats submission failed.");
+			}
 			
 			// Load re-usable libraries
 			messenger = new Messenger( plugin_name );
@@ -98,17 +110,34 @@ public class Oracle extends JavaPlugin {
 			// Add commands
 			if( getConfig().getBoolean("oracle.bans.enabled") ){
 				getCommand("ban").setExecutor( (CommandExecutor) new OracleCommands(this) );
+				getCommand("lookup").setExecutor( (CommandExecutor) new OracleCommands(this) );
 				getCommand("unban").setExecutor( (CommandExecutor) new OracleCommands(this) );
 			}
 			if( getConfig().getBoolean("oracle.joins.enabled") ){
+				getCommand("alts").setExecutor( (CommandExecutor) new OracleCommands(this) );
 				getCommand("seen").setExecutor( (CommandExecutor) new OracleCommands(this) );
+				getCommand("played").setExecutor( (CommandExecutor) new OracleCommands(this) );
+				getCommand("playhist").setExecutor( (CommandExecutor) new OracleCommands(this) );
+				getCommand("stats").setExecutor( (CommandExecutor) new OracleCommands(this) );
 			}
+			if( getConfig().getBoolean("oracle.warnings.enabled") ){
+				getCommand("warn").setExecutor( (CommandExecutor) new WarnCommands(this) );
+				getCommand("warnings").setExecutor( (CommandExecutor) new OracleCommands(this) );
+			}
+			getCommand("ison").setExecutor( (CommandExecutor) new OracleCommands(this) );
 			
 			// Register listeners
 			getServer().getPluginManager().registerEvents(new OraclePlayerListener(this), this);
 			
+			// disabled due to reload use cases
+//			// Force offline date for everyone
+//			if( getConfig().getBoolean("oracle.joins.enabled") ){
+//				JoinUtil.forceDateForAllPlayers();
+//			}
+			
 			// Register tasks
 			catchUncaughtDisconnects();
+			runAnnouncements();
 			
 		}
 	}
@@ -201,6 +230,94 @@ public class Oracle extends JavaPlugin {
 	}
 	
 	
+	/**
+	 * 
+	 */
+	protected void setupDatabase() {
+
+		try {
+			final Connection conn = dbc();
+			if (conn == null)
+				return;
+			
+			String query = "CREATE TABLE IF NOT EXISTS `oracle_announcements` (" +
+					"`announcement_id` int(11) NOT NULL AUTO_INCREMENT," +
+					"`announcement` varchar(255) NOT NULL," +
+					"`type` varchar(16) NOT NULL," +
+					"`is_active` tinyint(1) NOT NULL," +
+					"PRIMARY KEY (`announcement_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+			Statement st = conn.createStatement();
+			st.executeUpdate(query);
+
+			query = "CREATE TABLE IF NOT EXISTS `oracle_bans` (" +
+					"`ban_id` int(11) NOT NULL AUTO_INCREMENT," +
+					"`player_id` int(11) NOT NULL," +
+					"`staff_player_id` int(11) NOT NULL," +
+					"`reason` varchar(155) NOT NULL," +
+					"`epoch` int(11) NOT NULL," +
+					"`unbanned` tinyint(1) NOT NULL DEFAULT '0'," +
+					"PRIMARY KEY (`ban_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+			st.executeUpdate(query);
+			
+			query = "CREATE TABLE IF NOT EXISTS `oracle_ips` (" +
+					"`ip_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+					"`ip` int(11) unsigned NOT NULL," +
+					"PRIMARY KEY (`ip_id`)" +
+					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
+			st.executeUpdate(query);
+			
+			query = "CREATE TABLE IF NOT EXISTS `oracle_joins` (" +
+					"`join_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+					"`player_count` smallint(4) unsigned NOT NULL," +
+					"`player_id` int(11) unsigned NOT NULL," +
+					"`player_join` int(11) NOT NULL," +
+					"`player_quit` int(11) unsigned DEFAULT NULL," +
+					"`playtime` int(11) unsigned DEFAULT NULL," +
+					"`ip_id` int(11) unsigned NOT NULL," +
+					"PRIMARY KEY (`join_id`)" +
+					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
+			st.executeUpdate(query);
+
+			query = "CREATE TABLE IF NOT EXISTS `oracle_players` (" +
+					"`player_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+					"`player` varchar(16) NOT NULL," +
+					"PRIMARY KEY (`player_id`)" +
+					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
+			st.executeUpdate(query);
+			
+			query = "CREATE TABLE IF NOT EXISTS `oracle_unbans` (" +
+					"`unban_id` int(11) NOT NULL AUTO_INCREMENT," +
+					"`player_id` int(11) unsigned NOT NULL," +
+					"`staff_player_id` int(11) unsigned NOT NULL," +
+					"`epoch` int(11) unsigned NOT NULL," +
+					"PRIMARY KEY (`unban_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+			st.executeUpdate(query);
+			
+			query = "CREATE TABLE IF NOT EXISTS `oracle_warnings` (" +
+					"`warning_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+					"`player_id` int(11) unsigned NOT NULL," +
+					"`reason` varchar(155) NOT NULL," +
+					"`staff_player_id` int(11) unsigned NOT NULL," +
+					"`date_created` int(11) unsigned NOT NULL," +
+					"`deleted` tinyint(1) NOT NULL DEFAULT '0'," +
+					"PRIMARY KEY (`warning_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+			st.executeUpdate(query);
+
+
+			st.close();
+			conn.close();
+			
+		} catch (SQLException e) {
+			log("Database connection error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	
 //	/**
 //	 * Attempt to reconnect to the database
 //	 * @return
@@ -252,7 +369,8 @@ public class Oracle extends JavaPlugin {
 			    public void run(){
 			    	String on_users = "";
 					for(Player pl: getServer().getOnlinePlayers()) {
-						on_users += "'"+pl.getName()+"',";
+						int player_id = JoinUtil.lookupPlayer(pl);
+						on_users += ""+player_id+",";
 					}
 					if(!on_users.isEmpty()){
 						on_users = on_users.substring(0, on_users.length()-1);
@@ -261,6 +379,36 @@ public class Oracle extends JavaPlugin {
 			    }
 			}, 1200L, 1200L);
 		}
+	}
+	
+	
+	/**
+	 * If a user disconnects in an unknown way that is never caught by onPlayerQuit,
+	 * this will force close all records except for players currently online.
+	 */
+	public void runAnnouncements(){
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+
+		    public void run() {
+
+		    	// Pull all items matching this name
+				List<String> announces = AnnouncementUtil.getActiveAnnouncements();
+				if(!announces.isEmpty()){
+					
+					if(last_announcement >= announces.size()){
+						last_announcement = 0;
+					}
+					
+					String msg = announces.get(last_announcement);
+					for(Player pl : getServer().getOnlinePlayers()) {
+			    		pl.sendMessage( TypeUtils.colorize(msg) );
+			    	}
+					log( msg );
+					
+					last_announcement++;
+				}
+		    }
+		}, 6000L, 6000L);
 	}
 	
 	
@@ -294,6 +442,17 @@ public class Oracle extends JavaPlugin {
         }
         return Name;
     }
+    
+    
+    /**
+	 * 
+	 * @param message
+	 */
+	public static void debug(String message) {
+		if (config.getBoolean("oracle.debug")) {
+			log.info("[" + plugin_name + "]: " + message);
+		}
+	}
     
     
     /**
@@ -348,10 +507,19 @@ public class Oracle extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable(){
+		
+		// disabled because of reload cases
+//		// Force offline date for everyone
+//		if( getConfig().getBoolean("oracle.joins.enabled") ){
+//			JoinUtil.forceDateForAllPlayers();
+//		}
+		
 		// Close pool connections when plugin disables
-			if (pool != null) {
-				pool.close();
-			}
+		if (pool != null) {
+			pool.close();
+		}
+		
 		log("Closing plugin.");
+		
 	}
 }

@@ -1,16 +1,16 @@
 package me.botsko.oracle.commands;
 
-import java.text.ParseException;
-
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 import me.botsko.oracle.Oracle;
 import me.botsko.oracle.commandlibs.CallInfo;
 import me.botsko.oracle.commandlibs.SubHandler;
-import me.botsko.oracle.utils.SeenUtil;
+import me.botsko.oracle.utils.Playtime;
+import me.botsko.oracle.utils.PlaytimeUtil;
 
-public class SeenCommand implements SubHandler {
+public class PlayedCommand implements SubHandler {
 	
 	/**
 	 * 
@@ -23,7 +23,7 @@ public class SeenCommand implements SubHandler {
 	 * @param plugin
 	 * @return 
 	 */
-	public SeenCommand(Oracle plugin) {
+	public PlayedCommand(Oracle plugin) {
 		this.plugin = plugin;
 	}
 	
@@ -33,15 +33,9 @@ public class SeenCommand implements SubHandler {
 	 */
 	public void handle( final CallInfo call ){
 		
-		String username = null;
-		if(call.getArgs().length > 0){
-			// Expand partials
-			String tmp = plugin.expandName( call.getArg(0) );
-			if(tmp != null){
-	    		username = tmp;
-	    	}
-		} else {
-			username = call.getPlayer().getName();
+		String username = call.getSender().getName();
+		if( call.getArgs().length > 0 ){
+			username = plugin.expandName(username);
 		}
 		
 		final OfflinePlayer player = Bukkit.getOfflinePlayer(username);
@@ -55,12 +49,9 @@ public class SeenCommand implements SubHandler {
     	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
 			public void run(){
 		
-				call.getPlayer().sendMessage( Oracle.messenger.playerHeaderMsg( "Join & Last Seen Dates for " + player.getName() ) );
-				try {
-					call.getSender().sendMessage( Oracle.messenger.playerMsg("Joined " + SeenUtil.getPlayerFirstSeen(player)) );
-					call.getSender().sendMessage( Oracle.messenger.playerMsg("Last Seen " + SeenUtil.getPlayerLastSeen(player)) );
-				} catch (ParseException e){
-				}
+				Playtime playtime = PlaytimeUtil.getPlaytime( player );
+				String msg = ChatColor.GOLD + player.getName() + " has played for " + playtime.getHours() + " hours, " + playtime.getMinutes() + " minutes, and " + playtime.getSeconds() + " seconds. Nice!";
+				call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg( msg ) );
 			}
     	});
 	}

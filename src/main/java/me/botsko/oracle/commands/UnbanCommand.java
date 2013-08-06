@@ -1,6 +1,7 @@
 package me.botsko.oracle.commands;
 
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import me.botsko.oracle.Oracle;
 import me.botsko.oracle.commandlibs.CallInfo;
@@ -9,21 +10,6 @@ import me.botsko.oracle.utils.BanUtil;
 
 public class UnbanCommand implements SubHandler {
 	
-	/**
-	 * 
-	 */
-	private Oracle plugin;
-	
-	
-	/**
-	 * 
-	 * @param plugin
-	 * @return 
-	 */
-	public UnbanCommand(Oracle plugin) {
-		this.plugin = plugin;
-	}
-	
 	
 	/**
 	 * Handle the command
@@ -31,24 +17,18 @@ public class UnbanCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		if(call.getArgs().length <= 0){
-			call.getSender().sendMessage( plugin.messenger.playerError("You must provide a username to unban.") );
+			call.getSender().sendMessage( Oracle.messenger.playerError("You must provide a username to unban.") );
 			return;
 		}
 		
 		// Who
-		String username = call.getArg(0);
-		
-		// Who unbanned
-		String moderator = "console";
-		if( call.getSender() instanceof Player ){
-			moderator = ((Player)call.getSender()).getName();
-		}
-	
+		OfflinePlayer player = Bukkit.getOfflinePlayer( call.getArg(0) );
+
 		// Save to db
-		BanUtil.unbanByUsername( moderator, username );
+		BanUtil.unbanByUsername( call.getSender(), player );
 		
 		// Success
-		call.getSender().sendMessage( plugin.messenger.playerHeaderMsg("Player has been unbanned.") );
+		call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg("Player has been unbanned.") );
     
 	}
 }

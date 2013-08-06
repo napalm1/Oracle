@@ -43,6 +43,16 @@ public class OracleConfig extends ConfigBase {
 		config.addDefault("oracle.bans.enabled", true);
 		config.addDefault("oracle.joins.enabled", true);
 		config.addDefault("oracle.joins.use-bungeecord", false);
+		config.addDefault("oracle.warnings.enabled", true);
+		
+		
+		config.addDefault("oracle.guidebook.enabled", false);
+		config.addDefault("oracle.guidebook.author", "viveleroi");
+		config.addDefault("oracle.guidebook.title", "Server Guide");
+		config.addDefault("oracle.guidebook.contents", new String[]{"Welcome to the server!","Please read all rules at spawn."});
+		
+		// Misc
+		config.addDefault("oracle.log-command-use-to-console", true);
 		
 		config.addDefault("oracle.kick-minechat", true);
 		

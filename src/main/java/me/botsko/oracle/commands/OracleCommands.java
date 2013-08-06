@@ -25,14 +25,50 @@ public class OracleCommands extends Executor {
 		
 		final Oracle oracle = (Oracle) plugin;
 
+		/**
+		 * /alts
+		 */
+		addSub("alts", "oracle.alts")
+		.setMinArgs(1)
+		.allowConsole()
+		.setHandler(new AltsCommand( oracle ));
 		
 		/**
 		 * /ban
 		 */
 		addSub("ban", "oracle.ban")
+		.setMinArgs(1)
 		.allowConsole()
 		.setHandler(new BanCommand( oracle ));
 		
+		/**
+		 * /lookup
+		 */
+		addSub("lookup", "oracle.lookup")
+		.allowConsole()
+		.setHandler(new LookupCommand( oracle ));
+		
+		/**
+		 * /ison
+		 */
+		addSub("ison", "oracle.ison")
+		.setMinArgs(1)
+		.allowConsole()
+		.setHandler(new IsonCommand( oracle ));
+		
+		/**
+		 * /played
+		 */
+		addSub("played", "oracle.played")
+		.allowConsole()
+		.setHandler(new PlayedCommand( oracle ));
+		
+		/**
+		 * /playhist
+		 */
+		addSub("playhist", "oracle.played")
+		.allowConsole()
+		.setHandler(new PlayhistCommand());
 		
 		/**
 		 * /seen
@@ -41,13 +77,27 @@ public class OracleCommands extends Executor {
 		.allowConsole()
 		.setHandler(new SeenCommand( oracle ));
 		
+		/**
+		 * /stats
+		 */
+		addSub("stats", "oracle.stats")
+		.allowConsole()
+		.setHandler(new StatsCommand());
 		
 		/**
 		 * /unban
 		 */
 		addSub("unban", "oracle.unban")
+		.setMinArgs(1)
 		.allowConsole()
-		.setHandler(new UnbanCommand( oracle ));
+		.setHandler(new UnbanCommand());
+		
+		/**
+		 * /warnings
+		 */
+		addSub("warnings", "oracle.warnings")
+		.allowConsole()
+		.setHandler(new WarningsCommand());
 		
 		
 		/**
@@ -58,8 +108,8 @@ public class OracleCommands extends Executor {
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {
             	oracle.reloadConfig();
-            	oracle.config = oracle.getConfig();
-				call.getSender().sendMessage( oracle.messenger.playerMsg("Configuration reloaded successfully.") );
+            	Oracle.config = oracle.getConfig();
+				call.getSender().sendMessage( Oracle.messenger.playerMsg("Configuration reloaded successfully.") );
             }
 		});
 	}
