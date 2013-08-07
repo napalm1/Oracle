@@ -20,6 +20,11 @@ public class BanIpCommand implements SubHandler {
 			return;
 		}
 		
+		if(call.getArg(0).equals("127.0.0.1")){
+			call.getSender().sendMessage( Oracle.messenger.playerError("You may not ban a localhost IP.") );
+			return;
+		}
+		
 		String reason = "You're banned. No reason provided.";
 		if(call.getArgs().length > 1){
 			String[] messageArgs = new String[(call.getArgs().length - 1)];

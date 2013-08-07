@@ -177,23 +177,24 @@ public class OraclePlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLogin(final PlayerLoginEvent event){
-    	
+
     	if( !plugin.getConfig().getBoolean("oracle.bans.enabled") ) return;
     	
     	final Player player = event.getPlayer();
     	
-    	// Check for alt accounts in async thread
-    	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
-			public void run(){
+    	// sync can't kick this way, not a huge need atm
+//    	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+//			public void run(){
 		    	try {
-					BanUtil.playerMayJoin( player );
+		    		final String ip = event.getAddress().getHostAddress().toString();
+					BanUtil.playerMayJoin( player, ip );
 				} catch (Exception e){
 					event.setKickMessage( "Banned. " + e.getMessage() );
 					event.setResult( Result.KICK_OTHER );
 					plugin.log( "Rejecting player login due to ban. For: " + player.getName() );
 				}
-			}
-    	});
+//			}
+//    	});
     }
     
     
@@ -205,7 +206,6 @@ public class OraclePlayerListener implements Listener {
     public void onPlayerQuit(final PlayerQuitEvent event){
     	if( !plugin.getConfig().getBoolean("oracle.joins.enabled") ) return;
     	
-    	// Check for alt accounts in async thread
     	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
 			public void run(){
 		        try {

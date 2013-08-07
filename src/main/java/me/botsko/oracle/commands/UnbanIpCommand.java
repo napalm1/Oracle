@@ -22,7 +22,7 @@ public class UnbanIpCommand implements SubHandler {
 		BanUtil.unbanByIp( call.getSender(), call.getArg(0) );
 		
 		// Success
-		call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg("Player has been unbanned.") );
+		call.getSender().sendMessage( Oracle.messenger.playerHeaderMsg("IP has been unbanned.") );
     
 	}
 }
