@@ -193,11 +193,12 @@ public class JoinUtil {
 			}
 
 			conn = Oracle.dbc();
-	        s = conn.prepareStatement("INSERT INTO oracle_joins (player_count,player_id,player_join,ip_id) VALUES (?,?,?,?)");
-	        s.setInt(1, online_count);
-	        s.setInt(2, player_id);
-	        s.setLong(3, System.currentTimeMillis() / 1000L);
-	        s.setInt(4, ip_id);
+	        s = conn.prepareStatement("INSERT INTO oracle_joins (server_id,player_count,player_id,player_join,ip_id) VALUES (?,?,?,?,?)");
+	        s.setInt(1, ServerUtil.lookupServer());
+	        s.setInt(2, online_count);
+	        s.setInt(3, player_id);
+	        s.setLong(4, System.currentTimeMillis() / 1000L);
+	        s.setInt(5, ip_id);
 	        s.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();

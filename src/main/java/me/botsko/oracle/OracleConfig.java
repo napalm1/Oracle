@@ -26,7 +26,9 @@ public class OracleConfig extends ConfigBase {
 		
 		// set defaults
 		config.addDefault("oracle.debug", false);
-		config.addDefault("oracle.language", "en-us");
+//		config.addDefault("oracle.language", "en-us");
+		
+		config.addDefault("oracle.server-alias", "bukkit-main");
 		
 		// Database
 		config.addDefault("oracle.database.max-pool-connections", 20);

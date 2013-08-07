@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-import me.botsko.elixr.TypeUtils;
 import me.botsko.oracle.commands.OracleCommands;
 import me.botsko.oracle.commands.WarnCommands;
 import me.botsko.oracle.listeners.OraclePlayerListener;
 import me.botsko.oracle.utils.AnnouncementUtil;
 import me.botsko.oracle.utils.BungeeCord;
 import me.botsko.oracle.utils.JoinUtil;
+import me.botsko.oracle.utils.ServerUtil;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.bukkit.command.CommandExecutor;
@@ -40,6 +40,7 @@ public class Oracle extends JavaPlugin {
 	public static FileConfiguration config;
 	public static Messenger messenger;
 	public static HashMap<Player,Integer> oraclePlayers = new HashMap<Player,Integer>();
+	public static int oracleServer = 0;
 
 	
     /**
@@ -88,6 +89,9 @@ public class Oracle extends JavaPlugin {
 			
 			// Setup databases
 			setupDatabase();
+			
+			// Cache server id
+			ServerUtil.lookupServer( config.getString("oracle.server-alias") );
 		
 			try {
 			    Metrics metrics = new Metrics(this);
@@ -403,7 +407,7 @@ public class Oracle extends JavaPlugin {
 					
 					String msg = announces.get(last_announcement);
 					for(Player pl : getServer().getOnlinePlayers()) {
-			    		pl.sendMessage( TypeUtils.colorize(msg) );
+			    		pl.sendMessage( colorize(msg) );
 			    	}
 					log( msg );
 					
@@ -443,6 +447,18 @@ public class Oracle extends JavaPlugin {
             return Name;
         }
         return Name;
+    }
+    
+    
+    /**
+	 * Converts colors place-holders.
+	 * @todo replace with Elixr... once we need more of it
+	 * @param text
+	 * @return
+	 */
+	public String colorize(String text){
+        String colorized = text.replaceAll("(&([a-f0-9A-F]))", "\u00A7$2");
+        return colorized;
     }
     
     
