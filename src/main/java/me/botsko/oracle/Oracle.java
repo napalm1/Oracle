@@ -252,65 +252,81 @@ public class Oracle extends JavaPlugin {
 					"`type` varchar(16) NOT NULL," +
 					"`is_active` tinyint(1) NOT NULL," +
 					"PRIMARY KEY (`announcement_id`)" +
-					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			Statement st = conn.createStatement();
 			st.executeUpdate(query);
 
 			query = "CREATE TABLE IF NOT EXISTS `oracle_bans` (" +
 					"`ban_id` int(11) NOT NULL AUTO_INCREMENT," +
-					"`player_id` int(11) NOT NULL," +
-					"`staff_player_id` int(11) NOT NULL," +
-					"`reason` varchar(155) NOT NULL," +
-					"`epoch` int(11) NOT NULL," +
+					"`player_id` int(11) unsigned DEFAULT NULL," +
+					"`ip_id` int(10) unsigned DEFAULT NULL," +
+					"`staff_player_id` int(11) unsigned NOT NULL," +
+					"`reason` varchar(255) NOT NULL," +
+					"`epoch` int(11) unsigned NOT NULL," +
 					"`unbanned` tinyint(1) NOT NULL DEFAULT '0'," +
-					"PRIMARY KEY (`ban_id`)" +
-					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+					"PRIMARY KEY (`ban_id`)," +
+					"KEY `ip_id` (`ip_id`)," +
+					"KEY `player_id` (`player_id`)" +
+					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
 			
 			query = "CREATE TABLE IF NOT EXISTS `oracle_ips` (" +
-					"`ip_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
-					"`ip` int(11) unsigned NOT NULL," +
-					"PRIMARY KEY (`ip_id`)" +
+					"`ip_id` int(10) unsigned NOT NULL AUTO_INCREMENT," +
+					"`ip` int(10) unsigned NOT NULL," +
+					"PRIMARY KEY (`ip_id`)," +
+					"KEY `ip` (`ip`)" +
 					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
 			
 			query = "CREATE TABLE IF NOT EXISTS `oracle_joins` (" +
 					"`join_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+					"`server_id` int(10) unsigned NOT NULL," +
 					"`player_count` smallint(4) unsigned NOT NULL," +
-					"`player_id` int(11) unsigned NOT NULL," +
+					"`player_id` int(10) unsigned NOT NULL," +
 					"`player_join` int(11) NOT NULL," +
 					"`player_quit` int(11) unsigned DEFAULT NULL," +
 					"`playtime` int(11) unsigned DEFAULT NULL," +
-					"`ip_id` int(11) unsigned NOT NULL," +
-					"PRIMARY KEY (`join_id`)" +
+					"`ip_id` int(10) unsigned NOT NULL," +
+					"PRIMARY KEY (`join_id`)," +
+					"KEY `player_id` (`player_id`)," +
+					"KEY `ip_id` (`ip_id`)" +
 					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
 
 			query = "CREATE TABLE IF NOT EXISTS `oracle_players` (" +
-					"`player_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+					"`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT," +
 					"`player` varchar(16) NOT NULL," +
-					"PRIMARY KEY (`player_id`)" +
+					"PRIMARY KEY (`player_id`)," +
+					"KEY `player` (`player`)" +
+					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
+			st.executeUpdate(query);
+			
+			query = "CREATE TABLE IF NOT EXISTS `oracle_servers` (" +
+					"`server_id` int(10) unsigned NOT NULL AUTO_INCREMENT," +
+					"`server` varchar(16) NOT NULL," +
+					"PRIMARY KEY (`server_id`)" +
 					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
 			
 			query = "CREATE TABLE IF NOT EXISTS `oracle_unbans` (" +
 					"`unban_id` int(11) NOT NULL AUTO_INCREMENT," +
-					"`player_id` int(11) unsigned NOT NULL," +
+					"`player_id` int(11) unsigned DEFAULT NULL," +
+					"`ip_id` int(10) unsigned DEFAULT NULL," +
 					"`staff_player_id` int(11) unsigned NOT NULL," +
 					"`epoch` int(11) unsigned NOT NULL," +
 					"PRIMARY KEY (`unban_id`)" +
-					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
 			
 			query = "CREATE TABLE IF NOT EXISTS `oracle_warnings` (" +
-					"`warning_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
+					"`warning_id` int(11) NOT NULL AUTO_INCREMENT," +
 					"`player_id` int(11) unsigned NOT NULL," +
-					"`reason` varchar(155) NOT NULL," +
+					"`reason` text NOT NULL," +
 					"`staff_player_id` int(11) unsigned NOT NULL," +
-					"`date_created` int(11) unsigned NOT NULL," +
+					"`epoch` int(11) unsigned NOT NULL," +
 					"`deleted` tinyint(1) NOT NULL DEFAULT '0'," +
 					"PRIMARY KEY (`warning_id`)" +
-					") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
 
 
