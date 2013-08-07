@@ -141,6 +141,11 @@ public class Oracle extends JavaPlugin {
 //				JoinUtil.forceDateForAllPlayers();
 //			}
 			
+			// Create join records for all currently online players
+			for( Player pl : getServer().getOnlinePlayers() ){
+				JoinUtil.registerPlayerJoin( pl, getServer().getOnlinePlayers().length );
+			}
+			
 			// Register tasks
 			catchUncaughtDisconnects();
 			runAnnouncements();
@@ -542,11 +547,10 @@ public class Oracle extends JavaPlugin {
 	@Override
 	public void onDisable(){
 		
-		// disabled because of reload cases
-//		// Force offline date for everyone
-//		if( getConfig().getBoolean("oracle.joins.enabled") ){
-//			JoinUtil.forceDateForAllPlayers();
-//		}
+		// Force offline date for everyone
+		if( getConfig().getBoolean("oracle.joins.enabled") ){
+			JoinUtil.forceDateForAllPlayers();
+		}
 		
 		// Close pool connections when plugin disables
 		if (pool != null) {

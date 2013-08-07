@@ -40,8 +40,8 @@ public class ServerUtil {
     		rs = s.executeQuery();
 
     		if( rs.next() ){
-    			Oracle.oracleServer = rs.getInt("player_id");
-    			return rs.getInt("player_id");
+    			Oracle.oracleServer = rs.getInt("server_id");
+    			return rs.getInt("server_id");
     		} else {
     			return registerServer( server );
     		}
