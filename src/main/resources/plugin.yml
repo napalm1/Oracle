@@ -18,9 +18,15 @@ commands:
    ban:
       description: Ban a player from the server.
       usage: /ban [player]
+   ban-ip:
+      description: Ban an IP
+      usage: /ban [ip]
    unban:
       description: Unban a player from the server.
       usage: /unban [player]
+   unban-ip:
+      description: Unban an IP
+      usage: /unban [ip]
    stats:
       description: Shows basic stats for the server
       usage: /stats

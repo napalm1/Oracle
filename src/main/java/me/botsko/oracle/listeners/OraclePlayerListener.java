@@ -180,15 +180,20 @@ public class OraclePlayerListener implements Listener {
     	
     	if( !plugin.getConfig().getBoolean("oracle.bans.enabled") ) return;
     	
-    	Player player = event.getPlayer();
+    	final Player player = event.getPlayer();
     	
-    	try {
-			BanUtil.playerMayJoin( player );
-		} catch (Exception e){
-			event.setKickMessage( "Banned. " + e.getMessage() );
-			event.setResult( Result.KICK_OTHER );
-			plugin.log( "Rejecting player login due to ban. For: " + player.getName() );
-		}
+    	// Check for alt accounts in async thread
+    	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+			public void run(){
+		    	try {
+					BanUtil.playerMayJoin( player );
+				} catch (Exception e){
+					event.setKickMessage( "Banned. " + e.getMessage() );
+					event.setResult( Result.KICK_OTHER );
+					plugin.log( "Rejecting player login due to ban. For: " + player.getName() );
+				}
+			}
+    	});
     }
     
     

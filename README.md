@@ -7,15 +7,14 @@ Oracle is based on dhmcStats, a custom/private plugin that formerly ran DHMC.us.
 
 ## Features Overview
 
-- You can disable each primary feature group if you don't want it.
-- Detailed playtime tracking: Tracks join/quit timestamps, IPs, with checks for uncaught disconnects, and more.
-- Supports servers behind BungeeCord proxies
+- Detailed **playtime tracking**: Tracks join/quit timestamps, IPs, with checks for uncaught disconnects, and more.
+- Supports servers behind **BungeeCord**
 - Use `/played` to view the total playtime for a player
 - `/seen` command for viewing first join and most recent playtime
 - Easily check if a player `/ison` 
-- Ban/unban support - stored in a database so it works cross-server.
-- Player warning system. `/warn` players for rule violation. They're shown a highlighted message of the warning, and staff are alerted if a player gets more than three.
-- Log commands and world/coordinates of their use to console.
+- **Cross-server ban/unban** - Full record of previous bans
+- Player **warning system**. `/warn` players for rule violation. They're shown a highlighted message of the warning, and staff are alerted if a player gets more than three.
+- Log commands and world/coordinates of their use to console (turn off if using Prism)
 - Scheduled broadcast announcements (in-dev)
 
 (Coming soon: Better reports, stats, player history, in-game way to control announcements)
@@ -40,6 +39,7 @@ This plugin *requires* mysql, so you'll need to configure the connection setting
 *Joins-related*
 
 - `oracle.alts` - `/alts [player]` - View all alternate possible accounts for this player
+- `oracle.alerts.alts` - Alerts player with this permission when a first-time user joins who has alts
 - `oracle.seen` - `/seen [player]` - View the date a player joined and was last here
 - `oracle.played` - `/played [player]` - View the total playtime of a player.
 

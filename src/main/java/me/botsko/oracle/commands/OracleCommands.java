@@ -42,6 +42,14 @@ public class OracleCommands extends Executor {
 		.setHandler(new BanCommand( oracle ));
 		
 		/**
+		 * /ban
+		 */
+		addSub("ban-ip", "oracle.ban")
+		.setMinArgs(1)
+		.allowConsole()
+		.setHandler(new BanIpCommand());
+		
+		/**
 		 * /lookup
 		 */
 		addSub("lookup", "oracle.lookup")
@@ -91,6 +99,14 @@ public class OracleCommands extends Executor {
 		.setMinArgs(1)
 		.allowConsole()
 		.setHandler(new UnbanCommand());
+		
+		/**
+		 * /unban-ip
+		 */
+		addSub("unban-ip", "oracle.unban")
+		.setMinArgs(1)
+		.allowConsole()
+		.setHandler(new UnbanIpCommand());
 		
 		/**
 		 * /warnings

@@ -40,6 +40,14 @@ public class BungeeCord implements PluginMessageListener {
                 if ( packetType.equals("IP") && player.isOnline() ) {
                     String ip = in.readUTF();
                     try {
+                    	
+                    	try {
+        					BanUtil.ipMayJoin( ip );
+        				} catch (Exception e){
+        					player.kickPlayer( "Banned. " + e.getMessage() );
+        					plugin.log( "Rejecting player login due to ban. For: " + player.getName() );
+        				}
+                    	
 						JoinUtil.setPlayerSessionIp( player, ip );
 					} catch (Exception e) {
 					}

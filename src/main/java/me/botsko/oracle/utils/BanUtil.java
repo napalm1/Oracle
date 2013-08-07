@@ -53,6 +53,40 @@ public class BanUtil {
 	 * @param person
 	 * @param account_name
 	 */
+	public static void banByIp( CommandSender staff, String ip, String reason ){
+		Connection conn = null;
+		PreparedStatement s = null;
+		try {
+			
+			// Insert/Get IP ID
+			int ip_id = JoinUtil.lookupIp( ip );
+			
+			int staff_player_id = 0;
+			if( staff instanceof Player ){
+				staff_player_id = JoinUtil.lookupPlayer( (Player) staff );
+			}
+			
+			conn = Oracle.dbc();
+	        s = conn.prepareStatement("INSERT INTO oracle_bans (ip_id,staff_player_id,reason,epoch) VALUES (?,?,?,?)");
+	        s.setInt(1, ip_id);
+	        s.setInt(2, staff_player_id);
+	        s.setString(3, reason);
+	        s.setLong(4, System.currentTimeMillis() / 1000L);
+	        s.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+	}
+	
+	
+	/**
+	 * 
+	 * @param person
+	 * @param account_name
+	 */
 	public static void unbanByUsername( CommandSender staff, OfflinePlayer player ){
 		
 		if( player == null ){
@@ -95,10 +129,61 @@ public class BanUtil {
 	
 	/**
 	 * 
+	 * @param person
+	 * @param account_name
+	 */
+	public static void unbanByIp( CommandSender staff, String ip ){
+		
+		Connection conn = null;
+		PreparedStatement s = null;
+		try {
+			conn = Oracle.dbc();
+			
+			// Insert/Get Player ID
+			int ip_id = JoinUtil.lookupIp( ip );
+			
+			int staff_player_id = 0;
+			if( staff instanceof Player ){
+				staff_player_id = JoinUtil.lookupPlayer( (Player) staff );
+			}
+			
+			// Add unban record
+	        s = conn.prepareStatement("INSERT INTO oracle_unbans (ip_id,staff_player_id,epoch) VALUES (?,?,?)");
+	        s.setInt(1, ip_id);
+	        s.setInt(2, staff_player_id);
+	        s.setLong(3, System.currentTimeMillis() / 1000L);
+	        s.executeUpdate();
+	        
+	        // Mark as unbanned
+	        s = conn.prepareStatement("UPDATE oracle_bans SET unbanned = 1 WHERE ip_id = ?");
+	        s.setInt(1, ip_id);
+	        s.executeUpdate();
+	        
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @throws Exception
+	 */
+	public static void playerMayJoin( OfflinePlayer player ) throws Exception{
+		playerMayJoin( player, null );
+	}
+	
+	
+	/**
+	 * 
 	 * @param username
 	 * @throws Exception 
 	 */
-	public static void playerMayJoin( OfflinePlayer player ) throws Exception{
+	public static void playerMayJoin( OfflinePlayer player, String ip ) throws Exception{
 		
 		if( player == null ){
 			throw new IllegalArgumentException("Argument may not be null");
@@ -112,9 +197,51 @@ public class BanUtil {
 			// Insert/Get Player ID
 			int player_id = JoinUtil.lookupPlayer( player );
 			
+			// Insert/Get Player ID
+			int ip_id = 0;
+			if( ip != null ){
+				ip_id = JoinUtil.lookupIp( ip );
+			}
+
 			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT * FROM oracle_bans WHERE player_id = ? AND unbanned = 0 LIMIT 1");
+    		s = conn.prepareStatement ("SELECT reason FROM oracle_bans WHERE ( player_id = ? OR ip_id = ? ) AND unbanned = 0 LIMIT 1");
     		s.setInt(1, player_id);
+    		s.setInt(2, ip_id);
+    		s.executeQuery();
+    		rs = s.getResultSet();
+    		
+    		if(rs.first()){
+    			throw new Exception( rs.getString("reason") );
+    		}
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+	}
+	
+	
+	/**
+	 * 
+	 * @param username
+	 * @throws Exception 
+	 */
+	public static void ipMayJoin( String ip ) throws Exception{
+		
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+			
+			// Insert/Get Player ID
+			int ip_id = JoinUtil.lookupIp( ip );
+
+			conn = Oracle.dbc();
+    		s = conn.prepareStatement ("SELECT reason FROM oracle_bans WHERE ip_id = ? AND unbanned = 0 LIMIT 1");
+    		s.setInt(1, ip_id);
     		s.executeQuery();
     		rs = s.getResultSet();
     		

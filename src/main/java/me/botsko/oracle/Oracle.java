@@ -110,8 +110,10 @@ public class Oracle extends JavaPlugin {
 			// Add commands
 			if( getConfig().getBoolean("oracle.bans.enabled") ){
 				getCommand("ban").setExecutor( (CommandExecutor) new OracleCommands(this) );
+				getCommand("ban-ip").setExecutor( (CommandExecutor) new OracleCommands(this) );
 				getCommand("lookup").setExecutor( (CommandExecutor) new OracleCommands(this) );
 				getCommand("unban").setExecutor( (CommandExecutor) new OracleCommands(this) );
+				getCommand("unban-ip").setExecutor( (CommandExecutor) new OracleCommands(this) );
 			}
 			if( getConfig().getBoolean("oracle.joins.enabled") ){
 				getCommand("alts").setExecutor( (CommandExecutor) new OracleCommands(this) );
