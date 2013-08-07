@@ -87,7 +87,9 @@ There's a basic internal API you can use by including the plugin in your project
 
 IRC: irc.esper.net #prism
 
-[Bug tracker](https://snowy-evening.com/botsko/oracle)       
+[Bug tracker](https://snowy-evening.com/botsko/oracle)   
+
+[Source](https://github.com/prism/Oracle)    
            
 ## Credits
 
