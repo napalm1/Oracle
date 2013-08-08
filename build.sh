@@ -48,7 +48,7 @@ mv /tmp/plugin-old.yml src/main/resources/plugin.yml
 mv target/Oracle-nightly.jar target/Oracle-$name.jar
 
 # send file to amazon bucket
-#s3cmd put --acl-public target/Oracle-$name.jar s3://botsko/Oracle/Oracle-$name.jar
+s3cmd put --acl-public target/Oracle-$name.jar s3://botsko/Oracle/Oracle-$name.jar
 
 # Create a new version file
 echo $name > versions.txt
@@ -64,5 +64,8 @@ fi
 # Remove the files
 rm versions.txt
 
+# Send a notification to IRC.
+pass=`cat pass.txt`
+curl -Gd "build=$name&pass=$pass" "http://stuff.nasonfish.com/Oracle/build.php"
 
 echo "BUILD COMPLETE"
