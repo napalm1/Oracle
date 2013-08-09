@@ -29,7 +29,7 @@ public class WarningsCommand implements SubHandler {
 				user = call.getPlayer().getName();
 			}
 		} else {
-			user = call.getArg(1);
+			user = call.getArg(0);
 		}
 
 		if(!user.isEmpty()){

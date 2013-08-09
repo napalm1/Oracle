@@ -387,7 +387,7 @@ public class JoinUtil {
     				"FROM oracle_joins j " +
     				"JOIN oracle_ips i ON i.ip_id = j.ip_id " +
     				"JOIN oracle_joins AS joins2 ON joins2.ip_id = i.ip_id AND joins2.player_id  != ? " +
-    				"JOIN oracle_players AS P ON joins2.player_id = p.player_id " +
+    				"JOIN oracle_players AS p ON joins2.player_id = p.player_id " +
     				"WHERE j.player_id = ?");
     		s.setInt(1, player_id);
     		s.setInt(2, player_id);
