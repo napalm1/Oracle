@@ -197,22 +197,26 @@ public class BanUtil {
 			// Insert/Get Player ID
 			int player_id = JoinUtil.lookupPlayer( player );
 			
-			// Insert/Get Player ID
-			int ip_id = 0;
-			if( ip != null ){
-				ip_id = JoinUtil.lookupIp( ip );
+			// A player we've never seen doesn't need to be matched
+			if( player_id > 0 ){
+			
+				// Insert/Get Player ID
+				int ip_id = 0;
+				if( ip != null ){
+					ip_id = JoinUtil.lookupIp( ip );
+				}
+	
+				conn = Oracle.dbc();
+	    		s = conn.prepareStatement ("SELECT reason FROM oracle_bans WHERE ( player_id = ? OR ip_id = ? ) AND unbanned = 0 LIMIT 1");
+	    		s.setInt(1, player_id);
+	    		s.setInt(2, ip_id);
+	    		s.executeQuery();
+	    		rs = s.getResultSet();
+	    		
+	    		if(rs.first()){
+	    			throw new Exception( rs.getString("reason") );
+	    		}
 			}
-
-			conn = Oracle.dbc();
-    		s = conn.prepareStatement ("SELECT reason FROM oracle_bans WHERE ( player_id = ? OR ip_id = ? ) AND unbanned = 0 LIMIT 1");
-    		s.setInt(1, player_id);
-    		s.setInt(2, ip_id);
-    		s.executeQuery();
-    		rs = s.getResultSet();
-    		
-    		if(rs.first()){
-    			throw new Exception( rs.getString("reason") );
-    		}
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -31,14 +31,25 @@ public class LookupCommand implements SubHandler {
 	 */
 	public void handle( final CallInfo call ){
 		
+		String username = call.getSender().getName();
+		if( call.getArgs().length > 0 ){
+			username = plugin.expandName( call.getArg(0) );
+		}
+		
+		final OfflinePlayer player = Bukkit.getOfflinePlayer(username);
+		
+		if( player == null ){
+			call.getSender().sendMessage( Oracle.messenger.playerError( "Could not find a player by that name." ) );
+			return;
+		}
+		
 		
 		// Check for alt accounts in async thread
     	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
 			public void run(){
 
 				try {
-					OfflinePlayer pl = Bukkit.getOfflinePlayer(call.getArg(0));
-					BanUtil.playerMayJoin( pl );
+					BanUtil.playerMayJoin( player );
 					call.getSender().sendMessage(Oracle.messenger.playerHeaderMsg( call.getArg(0) + " is not banned." ));
 				} catch ( Exception e ){
 					call.getSender().sendMessage(Oracle.messenger.playerHeaderMsg( call.getArg(0) + " is banned. Reason: " + e.getMessage() + "."));

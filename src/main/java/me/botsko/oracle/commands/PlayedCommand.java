@@ -35,7 +35,7 @@ public class PlayedCommand implements SubHandler {
 		
 		String username = call.getSender().getName();
 		if( call.getArgs().length > 0 ){
-			username = plugin.expandName(username);
+			username = plugin.expandName( call.getArg(0) );
 		}
 		
 		final OfflinePlayer player = Bukkit.getOfflinePlayer(username);
