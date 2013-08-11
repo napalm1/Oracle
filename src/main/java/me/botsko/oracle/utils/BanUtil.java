@@ -18,14 +18,19 @@ public class BanUtil {
 	 * 
 	 * @param person
 	 * @param account_name
+	 * @throws Exception 
 	 */
-	public static void banByUsername( CommandSender staff, OfflinePlayer player, String reason ){
+	public static void banByUsername( CommandSender staff, OfflinePlayer player, String reason ) throws Exception{
 		Connection conn = null;
 		PreparedStatement s = null;
 		try {
 			
 			// Insert/Get Player ID
 			int player_id = JoinUtil.lookupPlayer( player );
+			
+			if( player_id == 0 ){
+				throw new Exception("That player has not played on this server.");
+			}
 			
 			int staff_player_id = 0;
 			if( staff instanceof Player ){
@@ -217,7 +222,6 @@ public class BanUtil {
 	    			throw new Exception( rs.getString("reason") );
 	    		}
 			}
-
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
