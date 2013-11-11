@@ -1,6 +1,6 @@
 name: Oracle
 main: me.botsko.oracle.Oracle
-version: nightly
+version: ${describe}
 default: op
 commands:
    alts:
