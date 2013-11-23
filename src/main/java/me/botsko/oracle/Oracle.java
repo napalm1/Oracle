@@ -448,8 +448,7 @@ public class Oracle extends JavaPlugin {
 	 */
 	public void runPlaytimeMonitor(){
 		if( !getConfig().getBoolean("oracle.joins.enabled") ) return;
-//		getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlaytimeMonitor(), 18000L, 18000L);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlaytimeMonitor(), 600L, 600L);
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlaytimeMonitor(), 12000L, 12000L);
 	}
 	
 	
