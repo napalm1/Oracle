@@ -4,10 +4,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
  
-public class OracleFirstTimePlayerEvent extends Event {
+public class OraclePlaytimeMilestoneEvent extends Event {
 	
     private static final HandlerList handlers = new HandlerList();
     private final Player player;
+    private final int newHourCount;
     
 
     /**
@@ -17,8 +18,9 @@ public class OracleFirstTimePlayerEvent extends Event {
      * @param player
      * @param message
      */
-    public OracleFirstTimePlayerEvent( Player player ){
+    public OraclePlaytimeMilestoneEvent( Player player, int newHourCount ){
     	this.player = player;
+    	this.newHourCount = newHourCount;
     }
     
     
@@ -27,6 +29,15 @@ public class OracleFirstTimePlayerEvent extends Event {
 	 */
 	public Player getPlayer() {
 		return player;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getNewHourCount(){
+		return newHourCount;
 	}
 	
 

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import me.botsko.oracle.commands.OracleCommands;
 import me.botsko.oracle.commands.WarnCommands;
 import me.botsko.oracle.listeners.OraclePlayerListener;
+import me.botsko.oracle.tasks.PlaytimeMonitor;
 import me.botsko.oracle.utils.AnnouncementUtil;
 import me.botsko.oracle.utils.BungeeCord;
 import me.botsko.oracle.utils.JoinUtil;
@@ -41,6 +42,7 @@ public class Oracle extends JavaPlugin {
 	public static Messenger messenger;
 	public static HashMap<Player,Integer> oraclePlayers = new HashMap<Player,Integer>();
 	public static int oracleServer = 0;
+	public static HashMap<Player,Integer> playtimeHours = new HashMap<Player,Integer>();
 
 	
     /**
@@ -149,6 +151,7 @@ public class Oracle extends JavaPlugin {
 			// Register tasks
 			catchUncaughtDisconnects();
 			runAnnouncements();
+			runPlaytimeMonitor();
 			
 		}
 	}
@@ -436,6 +439,17 @@ public class Oracle extends JavaPlugin {
 				}
 		    }
 		}, 6000L, 6000L);
+	}
+	
+	
+	/**
+	 * If a user disconnects in an unknown way that is never caught by onPlayerQuit,
+	 * this will force close all records except for players currently online.
+	 */
+	public void runPlaytimeMonitor(){
+		if( !getConfig().getBoolean("oracle.joins.enabled") ) return;
+//		getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlaytimeMonitor(), 18000L, 18000L);
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlaytimeMonitor(), 600L, 600L);
 	}
 	
 	

@@ -10,6 +10,8 @@ import me.botsko.oracle.events.OracleFirstTimePlayerEvent;
 import me.botsko.oracle.utils.Alt;
 import me.botsko.oracle.utils.BanUtil;
 import me.botsko.oracle.utils.JoinUtil;
+import me.botsko.oracle.utils.Playtime;
+import me.botsko.oracle.utils.PlaytimeUtil;
 import me.botsko.oracle.utils.WarningUtil;
 
 import org.bukkit.Material;
@@ -79,7 +81,13 @@ public class OraclePlayerListener implements Listener {
 	        // Run insert record in async thread
         	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
     			public void run(){
+    				
     				JoinUtil.registerPlayerJoin( player, plugin.getServer().getOnlinePlayers().length );
+    				
+    				// Cache playtime hour count so we can detect when it's increased
+    				Playtime playtime = PlaytimeUtil.getPlaytime(player);
+    				Oracle.playtimeHours.put(player,playtime.getHours());
+    				
     			}
         	});
 	        
