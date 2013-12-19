@@ -316,7 +316,7 @@ public class JoinUtil {
     		s.executeUpdate();
     		
     		// Update playtime
-			s = conn.prepareStatement("UPDATE oracle_joins SET playtime = (player_quit - player_join) WHERE playtime IS NULL"+users);
+			s = conn.prepareStatement("UPDATE oracle_joins SET playtime = (player_quit - player_join) WHERE (player_quit - player_join) > 0 AND playtime IS NULL"+users);
 			s.executeUpdate();
     		
         } catch (SQLException e) {
@@ -348,7 +348,7 @@ public class JoinUtil {
     		s.executeUpdate();
     		
     		// Update playtime
-			s = conn.prepareStatement("UPDATE oracle_joins SET playtime = (player_quit - player_join) WHERE playtime IS NULL");
+			s = conn.prepareStatement("UPDATE oracle_joins SET playtime = (player_quit - player_join) WHERE  (player_quit - player_join) > 0 AND playtime IS NULL");
 			s.executeUpdate();
     		
         } catch (SQLException e) {
