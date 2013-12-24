@@ -511,7 +511,7 @@ public class Oracle extends JavaPlugin {
 	 * 
 	 * @param message
 	 */
-	public void log(String message){
+	public static void log(String message){
 		log.info("["+plugin_name+"]: " + message);
 	}
 	

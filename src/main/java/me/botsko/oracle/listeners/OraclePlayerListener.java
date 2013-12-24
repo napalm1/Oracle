@@ -60,7 +60,7 @@ public class OraclePlayerListener implements Listener {
     	int x = player.getLocation().getBlockX();
         int y = player.getLocation().getBlockY();
         int z = player.getLocation().getBlockZ();
-        plugin.log( "[Cmd] " + player.getName() + " " + cmd + " @" + player.getWorld().getName() + " " + x + " " + y + " " + z);
+        Oracle.log( "[Cmd] " + player.getName() + " " + cmd + " @" + player.getWorld().getName() + " " + x + " " + y + " " + z);
         
     }
 	

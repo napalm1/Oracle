@@ -26,7 +26,9 @@ public class PlaytimeMonitor implements Runnable {
 
 			if( playtime.getHours() > lastHourCount ){
 				
-//				Oracle.log("Throwing playtime hour increase event for " + p.getName());
+				Oracle.playtimeHours.put( p, playtime.getHours() );
+				
+				Oracle.log("Throwing playtime hour increase event for " + p.getName());
 				
 				// Throw event as this is a new player
 				OraclePlaytimeMilestoneEvent event = new OraclePlaytimeMilestoneEvent( p, playtime.getHours() );
