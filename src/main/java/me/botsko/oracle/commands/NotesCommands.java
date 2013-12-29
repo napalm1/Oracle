@@ -10,14 +10,14 @@ import me.botsko.oracle.commandlibs.Executor;
 import me.botsko.oracle.commandlibs.SubHandler;
 import me.botsko.oracle.utils.WarningUtil;
 
-public class WarnCommands extends Executor {
+public class NotesCommands extends Executor {
 	
 	/**
 	 * 
 	 * @param prism
 	 */
-	public WarnCommands(Oracle oracle) {
-		super( oracle, "command", "warn" );
+	public NotesCommands(Oracle oracle) {
+		super( oracle, "command", "note" );
 		setupCommands();
 	}
 	
@@ -29,25 +29,25 @@ public class WarnCommands extends Executor {
 		
 
 		/**
-		 * /warn delete [id]
+		 * /note delete [id]
 		 */
-		addSub( new String[]{"delete"}, "oracle.warn")
+		addSub( new String[]{"delete"}, "oracle.note")
 		.allowConsole()
 		.setMinArgs(1)
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {
             	// delete the warning
 				WarningUtil.deleteWarning( Integer.parseInt( call.getArg(0) ) );
-				call.getSender().sendMessage( Oracle.messenger.playerMsg("Warning deleted successfully."));
+				call.getSender().sendMessage( Oracle.messenger.playerMsg("Note deleted successfully."));
 				return;
             }
 		});
 		
 		
 		/**
-		 * /warn [username] [msg]
+		 * /note [username] [msg]
 		 */
-		addSub( new String[]{"default"}, "oracle.warn")
+		addSub( new String[]{"default"}, "oracle.note")
 		.allowConsole()
 		.setMinArgs(1)
 		.setHandler(new SubHandler() {
@@ -75,17 +75,10 @@ public class WarnCommands extends Executor {
 					WarningUtil.fileWarning( warned_player, reason, call.getSender() );
 					
 					// Alert them
-					if( warned_player instanceof Player ){
-						Player pl = (Player) warned_player;
-						pl.sendMessage( Oracle.messenger.playerError("=== OFFICIAL WARNING FILED FOR YOU ===") );
-						pl.sendMessage( Oracle.messenger.playerMsg(reason) );
-						pl.sendMessage( Oracle.messenger.playerError("Three warnings will result in a ban!") );
-					}
+				
+					call.getSender().sendMessage( Oracle.messenger.playerMsg("Note filed successfully."));
 
-					call.getSender().sendMessage( Oracle.messenger.playerMsg("Warning file successfully."));
-
-					// This may be a third warning!
-					WarningUtil.alertStaffOnWarnLimit( warned_player );
+					
 
 				}       	
             }
